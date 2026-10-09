@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Codex Orbit · 额度图标预览</title>
+  <link rel="stylesheet" href="/preview.css"><script type="module" src="/preview.js"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/">orbit<span> / codex</span></a><span class="tag">独立组件预览</span><button id="theme" aria-label="切换深浅色主题">深色外观</button></header>
+  <main>
+    <section class="intro"><p class="eyebrow">CODEX QUOTA, AT A GLANCE</p><h1>额度，看一眼就知道。</h1><p class="description">一个圆弧，四个点。把余量收进一个小图标。</p></section>
+    <section class="layout">
+      <div class="app-frame" aria-label="侧栏位置示意，不是 Codex 实际界面">
+        <aside class="sidebar">
+          <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="app-name">Codex <span>位置示意</span></div>
+          <div class="nav-row"><span>＋</span> 新建聊天</div><div class="nav-row"><span>⌕</span> 搜索聊天</div>
+          <div class="section-label">项目</div><div class="nav-row"><span>▱</span> 额度条</div>
+          <div class="chat active">图标与额度</div><div class="chat">设计参考</div>
+          <div class="sidebar-space"></div>
+          <div class="quota-slot">
+            <quota-orbit id="sidebar-orbit"></quota-orbit>
+            <div class="slot-label">剩余额度<small>点击图标看详情</small></div>
+            <section id="details" class="details" hidden aria-label="额度详情">
+              <div class="details-head">剩余额度<button id="close-details" aria-label="关闭详情">×</button></div>
+              <div class="detail-line"><span>5 小时</span><strong id="detail-five">—</strong></div><p id="five-reset"></p>
+              <div class="detail-line"><span>本周</span><strong id="detail-week">—</strong></div><p id="week-reset"></p>
+              <div class="detail-line"><span>可用重置</span><strong id="detail-resets">—</strong></div>
+              <p id="detail-status"></p>
+            </section>
+          </div>
+          <div class="profile"><div class="avatar">U</div><div>你的账号<small>ChatGPT 订阅</small></div><span>⌄</span></div>
+        </aside>
+        <div class="conversation"><span class="frame-caption">左下角 · 头像上方</span><div class="empty-message"><div class="mini-arc" aria-hidden="true"></div><h2>留在你习惯看的地方。</h2><p>组件在侧栏布局中占有固定位置。</p><p class="integration-note">这是独立组件预览。客户端安装包使用运行时接入，启用入口见 README。</p></div><div class="composer">开始一个新任务<span>↑</span></div></div>
+      </div>
+      <aside class="spec-panel">
+        <div class="large-icon"><quota-orbit id="hero-orbit"></quota-orbit></div>
+        <div class="source"><span id="status-light"></span><span id="source-label">正在读取真实额度</span></div>
+        <div class="legend"><div class="legend-symbol arc-symbol"></div><div><h3>外圈 / 5 小时</h3><p>剩余越少，黑色圆弧越短。</p></div></div>
+        <div class="legend"><div class="legend-symbol dots-symbol">••••</div><div><h3>四点 / 本周</h3><p>每用完 25%，一个点变灰。</p></div></div>
+        <div class="legend"><div class="legend-symbol number-symbol">2</div><div><h3>中心 / 重置次数</h3><p>显示可用次数，0 次时隐藏。</p></div></div>
+        <div class="mode-buttons" role="group" aria-label="数据来源"><button id="live" class="selected">真实额度</button><button id="demo">演示状态</button></div>
+        <div id="demo-controls" hidden>
+          <label for="five">5 小时已用 <output id="five-out">25%</output></label><input id="five" type="range" min="0" max="100" value="25">
+          <label for="week">周额度已用 <output id="week-out">50%</output></label><input id="week" type="range" min="0" max="100" value="50">
+          <label for="resets">可用重置次数</label><input id="resets" type="number" min="0" max="999" value="2">
+        </div>
+        <button class="refresh" id="refresh">刷新额度 <span>↻</span></button>
+        <p class="data-note" id="data-note">通过本机 Codex 登录读取，每 60 秒更新。</p>
+      </aside>
+    </section>
+    <footer><span>Codex Orbit · 开源组件</span><span>固定接入已实现 · 客户端启用需运行安装入口。</span></footer>
+  </main>
+</body>
+</html>

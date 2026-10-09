@@ -1,0 +1,50 @@
+"""Build the audited, dependency-free Node runtime from pinned MIT source."""
+from pathlib import Path
+import hashlib
+import json
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+VENDOR = ROOT / 'third_party' / 'codex-usage-badge'
+
+
+def replace_once(source, before, after):
+    if source.count(before) != 1:
+        raise ValueError('Pinned upstream source changed; adaptation needs review')
+    return source.replace(before, after)
+
+
+def build(native=False):
+    manifest = json.loads((VENDOR / 'SOURCE.json').read_text())
+    for path, expected in manifest['sha256'].items():
+        if hashlib.sha256((VENDOR / path).read_bytes()).hexdigest() != expected:
+            raise ValueError(f'Upstream checksum mismatch: {path}')
+    version = json.loads((ROOT / 'package.json').read_text())['version']
+    cdp = (VENDOR / 'src/cdp.js').read_text()
+    cdp = replace_once(cdp,
+        "return [installUsageBadge,installProjectColors,installProjectSizes,installThreadTokens].map(fn=>`(${fn.toString()})()`).join(';\\n');",
+        "return `(${installQuotaOrbit.toString()})()`;")
+    cdp = cdp.replace('__codexUsageBadge', '__codexOrbit')
+    app_server = (VENDOR / 'src/app-server.js').read_text().replace("name:'codex_usage_badge',title:'Codex Usage Badge'", "name:'codex_orbit',title:'Codex Orbit'")
+    parts = [f"/* Codex Orbit {version}; includes MIT-licensed codex-usage-badge code. */\n'use strict';\nconst AGENT_VERSION={json.dumps(version)};",
+             (VENDOR / 'src/rate-limits.js').read_text(), (VENDOR / 'src/resolve.js').read_text(),
+             app_server, cdp, (ROOT / 'src/orbit-values.cjs').read_text(),
+             (ROOT / 'src/injected-orbit.js').read_text(), (ROOT / 'src/agent.cjs').read_text()]
+    output = ROOT / 'build'
+    (output / 'startup').mkdir(parents=True, exist_ok=True)
+    (output / 'agent.cjs').write_text('\n\n'.join(parts) + '\n')
+    for name in ['watch.cjs','controller.cjs']:
+        (output / 'startup' / name).write_bytes((VENDOR / 'macos/startup' / name).read_bytes())
+    from adapt import adapt
+    adapt(ROOT, VENDOR, output, version)
+    if native:
+        subprocess.run(['clang','-fobjc-arc','-O2','-mmacosx-version-min=14.0','-arch','arm64','-arch','x86_64',
+                        '-framework','AppKit','-framework','ApplicationServices',
+                        str(VENDOR / 'macos/startup/bridge.m'),'-o',str(output / 'startup/bridge')],check=True)
+        subprocess.run(['codesign','--force','--sign','-',str(output / 'startup/bridge')],check=True)
+    print('Built:', output / 'agent.cjs')
+
+
+if __name__ == '__main__':
+    build('--native' in sys.argv)

@@ -1,0 +1,20 @@
+{
+  "name": "codex-orbit",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Codex sidebar quota orbit, adapted from MIT-licensed codex-usage-badge",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "python3 scripts/build.py",
+    "test": "node --test",
+    "test:python": "python3 -m unittest discover -s tests -v"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/y2675632584-hub/codex-orbit.git"
+  }
+}

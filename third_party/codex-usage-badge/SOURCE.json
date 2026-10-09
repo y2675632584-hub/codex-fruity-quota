@@ -1,0 +1,25 @@
+{
+  "repository": "https://github.com/jaykinhoo9/codex-usage-badge",
+  "commit": "d014efcd7735a4349576c6b424cac23b614f9115",
+  "license": "MIT",
+  "sha256": {
+    "LICENSE": "4d8a4ca224f090dc1225e603aae39d6d4dbefa34dcf7515f70c886806329a755",
+    "src/app-server.js": "68fb669fbce330346aa8863974cca6122e9ccd1184d06d42453d970b670515c9",
+    "src/rate-limits.js": "c69a637d166951104fdf791d4800e32b549b6272bdae8872b019dc03613dd2b4",
+    "src/resolve.js": "86a203e8fb5270dcbedfcbadd611673cff9ca825dc04eaee0a679e2d9f521167",
+    "src/cdp.js": "44dd968f159dfca7a885a5a71ce0930000f40215f06c3ba31ee30e09ccfc1831",
+    "macos/startup/controller.cjs": "51c4440973d7339345776c534b847e2dd411d1e772757bc91276055dc6c24f27",
+    "macos/startup/watch.cjs": "0a831c01f428b7c117ea02f3982b3ea887b05ee3efb3113c94479b1a521d2a25",
+    "macos/startup/bridge.m": "6722dcd567c9346484f1c34f31dc263427706b11b194dd2f2a8fff62ce208cd0",
+    "updater/core.cjs": "6a84ba87f6e642b3d00f21f6f643840d10b91b7a9dbaa29e5cb7c77b7fd08957",
+    "updater/worker.cjs": "92c2ffa37d717c23475463162832ef762afa036eab95705564e7eaf3c00d673c",
+    "windows/manage-windows.ps1": "262f59464d7524cb705501560a7cbe13b4e62f5dcf516aa04db016b58735816d",
+    "windows/update.cjs": "c29f901574021f692b7fa158413ee80f81d70b723d440e881f8669ab8599b24f",
+    "windows/update-windows.ps1": "38b946f15cc63f1231e25e60fc2ea07291c6d7d4f47c061c162d9f8a3b64587a",
+    "windows/bridge.cjs": "423f3361c67c1d833e911fb00f2dcf18b79fe52b4b5a7002ebabe97026b1516c",
+    "startup/controller.cjs": "be8bf6331e1c90286ed72e8d8be92e1d7286b7e9e77ff01396ef4f0a3a5d7c6d",
+    "startup/windows.cjs": "ee7e40866af6b6d58d1db3f61712e1e446458469a7fd836488c21e8b6bf7e094",
+    "startup/windows-bridge.ps1": "126f7a8b0a64f02b6f125381876d73d41194a9db50e6db62fa8bd9472cfdc441",
+    "startup/windows-native.cs": "4fc20ea89a917cb682c212836cfee78f55456719bf57f35fccd65f87032e5f06"
+  }
+}

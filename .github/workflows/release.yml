@@ -1,0 +1,35 @@
+name: Release packages
+on:
+  push:
+    tags: ['v*-macos', 'v*-windows']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ${{ endsWith(github.ref_name, '-macos') && 'macos-14' || 'windows-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - shell: bash
+        run: node -e 'const p=require("./package.json");if(!["v"+p.version+"-macos","v"+p.version+"-windows"].includes(process.env.GITHUB_REF_NAME))process.exit(1)'
+      - if: runner.os == 'macOS'
+        run: python scripts/build.py --native
+      - if: runner.os == 'Windows'
+        run: python scripts/build.py
+      - if: runner.os == 'macOS'
+        run: python scripts/build_release.py --platform macOS
+      - if: runner.os == 'Windows'
+        run: python scripts/build_release.py --platform Windows
+      - run: node --test
+      - if: runner.os == 'Windows'
+        shell: powershell
+        run: .\tests\windows-native.ps1
+      - shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.zip dist/SHA256SUMS.txt --verify-tag --title "Codex Orbit $GITHUB_REF_NAME" --notes "Fixed quota icon, weekly-only account support, verified packages and background updates. Live Codex compatibility still requires user verification."

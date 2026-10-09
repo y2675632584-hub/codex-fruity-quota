@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Codex Orbit · 固定接入测试</title>
+  <link rel="stylesheet" href="/rail.css">
+  <script src="/injected-orbit.js" defer></script>
+  <script type="module" src="/rail-preview.js"></script>
+</head>
+<body>
+  <header><a href="/rail.html">orbit / codex</a><span>固定接入测试 · 模拟导航栏</span><button id="theme">浅色外观</button></header>
+  <main>
+    <p class="eyebrow">REUSED PLACEMENT · YOUR ICON</p>
+    <h1>留在头像上方。</h1><p class="subtitle">复用同一个定位函数，图标在导航栏布局里占有位置。</p>
+    <section class="workspace">
+      <div class="client" aria-label="模拟客户端，仅用于验证组件定位">
+        <div id="rail-host"></div>
+        <aside class="projects"><h2>Codex</h2><p>＋ 新建聊天</p><p class="muted">项目</p><div class="project">▱ 额度条</div><div class="chat">图标与固定接入</div><p>▱ 工作记录</p><p>▱ 个人项目</p></aside>
+        <section class="chat-area"><div class="caption">接入测试页 · 非真实 Codex 界面</div><div class="center"><div class="mark"></div><h3>外圈、四点、重置次数。</h3><p>组件紧挨帮助／头像区域，随导航栏布局变化。</p><p class="muted">客户端启用需运行安装入口；此页测试的是同一段组件代码。</p></div><div class="composer">提出任务 <span>↑</span></div></section>
+      </div>
+      <aside class="controls">
+        <p class="control-title">验证面板</p><div class="connection"><i id="connection-light"></i><span id="source">等待真实额度</span></div>
+        <div class="buttons"><button id="live" class="selected">真实额度</button><button id="demo">演示状态</button></div>
+        <div id="demo-controls" hidden><label><input id="weekly-only" type="checkbox"> Pro／仅周额度</label><label for="five">5 小时已用 <output id="five-out">25%</output></label><input id="five" type="range" min="0" max="100" value="25"><label for="week">本周已用 <output id="week-out">50%</output></label><input id="week" type="range" min="0" max="100" value="50"><label for="resets">可用重置次数</label><input id="resets" type="number" min="0" max="999" value="2"></div>
+        <p class="group-label">布局恢复测试</p><button class="test-action" id="rerender">模拟侧栏重绘 <span>↻</span></button><button class="test-action" id="toggle-rail">隐藏导航栏 <span>⇥</span></button>
+        <div id="test-report" role="status">等待定位</div>
+        <p class="note">定位节点：导航栏 footer 前。找不到节点时隐藏，避免盖住其他内容。</p>
+      </aside>
+    </section>
+    <footer>Codex Orbit 0.3.0 · MIT · 复用 codex-usage-badge 的定位与连接方案</footer>
+  </main>
+  <template id="rail-template"><nav data-app-navigation-rail aria-label="模拟导航栏"><div class="top-icons"><span>⌂</span><span>◷</span><span>▥</span><span>▧</span><span>⚙</span><span>···</span></div><div class="rail-spacer"></div><div class="account-footer"><span class="help">?</span><div class="avatar">U</div></div></nav></template>
+</body>
+</html>

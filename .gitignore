@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+private/
+artifacts/
+*.log
+auth.json
+.env
+dist/
+build/
+.runtime/
+node_modules/
