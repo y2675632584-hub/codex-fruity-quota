@@ -16,24 +16,24 @@ def replace_once(source, before, after):
 
 
 def build(native=False):
-    manifest = json.loads((VENDOR / 'SOURCE.json').read_text())
+    manifest = json.loads((VENDOR / 'SOURCE.json').read_text(encoding='utf-8'))
     for path, expected in manifest['sha256'].items():
         if hashlib.sha256((VENDOR / path).read_bytes()).hexdigest() != expected:
             raise ValueError(f'Upstream checksum mismatch: {path}')
-    version = json.loads((ROOT / 'package.json').read_text())['version']
-    cdp = (VENDOR / 'src/cdp.js').read_text()
+    version = json.loads((ROOT / 'package.json').read_text(encoding='utf-8'))['version']
+    cdp = (VENDOR / 'src/cdp.js').read_text(encoding='utf-8')
     cdp = replace_once(cdp,
         "return [installUsageBadge,installProjectColors,installProjectSizes,installThreadTokens].map(fn=>`(${fn.toString()})()`).join(';\\n');",
         "return `(${installQuotaOrbit.toString()})()`;")
     cdp = cdp.replace('__codexUsageBadge', '__codexOrbit')
-    app_server = (VENDOR / 'src/app-server.js').read_text().replace("name:'codex_usage_badge',title:'Codex Usage Badge'", "name:'codex_orbit',title:'Codex Orbit'")
+    app_server = (VENDOR / 'src/app-server.js').read_text(encoding='utf-8').replace("name:'codex_usage_badge',title:'Codex Usage Badge'", "name:'codex_orbit',title:'Codex Orbit'")
     parts = [f"/* Codex Orbit {version}; includes MIT-licensed codex-usage-badge code. */\n'use strict';\nconst AGENT_VERSION={json.dumps(version)};",
-             (VENDOR / 'src/rate-limits.js').read_text(), (VENDOR / 'src/resolve.js').read_text(),
-             app_server, cdp, (ROOT / 'src/orbit-values.cjs').read_text(),
-             (ROOT / 'src/injected-orbit.js').read_text(), (ROOT / 'src/agent.cjs').read_text()]
+             (VENDOR / 'src/rate-limits.js').read_text(encoding='utf-8'), (VENDOR / 'src/resolve.js').read_text(encoding='utf-8'),
+             app_server, cdp, (ROOT / 'src/orbit-values.cjs').read_text(encoding='utf-8'),
+             (ROOT / 'src/injected-orbit.js').read_text(encoding='utf-8'), (ROOT / 'src/agent.cjs').read_text(encoding='utf-8')]
     output = ROOT / 'build'
     (output / 'startup').mkdir(parents=True, exist_ok=True)
-    (output / 'agent.cjs').write_text('\n\n'.join(parts) + '\n')
+    (output / 'agent.cjs').write_text('\n\n'.join(parts) + '\n',encoding='utf-8')
     for name in ['watch.cjs','controller.cjs']:
         (output / 'startup' / name).write_bytes((VENDOR / 'macos/startup' / name).read_bytes())
     from adapt import adapt

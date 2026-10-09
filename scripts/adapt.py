@@ -3,12 +3,12 @@ import json
 from pathlib import Path
 
 def adapt(root, vendor, output, version):
-    def source(name): return (vendor / name).read_text()
+    def source(name): return (vendor / name).read_text(encoding='utf-8')
     def save(name, text):
         p=output/name;p.parent.mkdir(parents=True,exist_ok=True)
         if name.endswith('.ps1'):text='\ufeff'+text.lstrip('\ufeff')
         with p.open('w',encoding='utf-8',newline='') as f:f.write(text)
-    release=json.loads((root/'release.json').read_text())
+    release=json.loads((root/'release.json').read_text(encoding='utf-8'))
     required=['build/agent.cjs','macos/manage.cjs','macos/transaction.cjs','build/startup/bridge','build/startup/controller.cjs','build/startup/watch.cjs','build/updater/core.cjs','build/updater/worker.cjs','build/update.json']
     core=source('updater/core.cjs').replace("'use strict';", "'use strict';\nfunction createUpdater(repository){\nif(!/^[A-Za-z0-9][A-Za-z0-9-]{0,38}\\/[A-Za-z0-9_.-]+$/.test(repository))throw Error('Invalid update repository');",1)
     core=core.replace("const repository='jaykinhoo9/codex-usage-badge';",'')
@@ -18,7 +18,7 @@ def adapt(root, vendor, output, version):
     core=core.replace("files.get('update.json')","files.get('build/update.json')").replace('SHA256SUMS.txt','FILE_SHA256SUMS')
     core=core.replace('module.exports={repository,','return {repository,')+'\n}\nmodule.exports={createUpdater};\n'
     save('updater/core.cjs',core)
-    save('updater/worker.cjs',(root/'updater/worker.cjs').read_text())
+    save('updater/worker.cjs',(root/'updater/worker.cjs').read_text(encoding='utf-8'))
     save('update.json',json.dumps({'schema':1,'repository':release['repository'],'version':version,'platform':'macOS','allowPrerelease':release.get('allowPrerelease',False)},indent=2)+'\n')
     # Windows keeps the upstream ownership guards, Store discovery, native activation and rollback.
     def brand(text):
