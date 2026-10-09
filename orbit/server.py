@@ -16,7 +16,10 @@ FILES = {"/": ("rail.html", "text/html"),
          "/quota-orbit.js": ("quota-orbit.js", "text/javascript"),
          "/rail.html": ("rail.html", "text/html"),
          "/rail.css": ("rail.css", "text/css"),
-         "/rail-preview.js": ("rail-preview.js", "text/javascript")}
+         "/rail-preview.js": ("rail-preview.js", "text/javascript"),
+         "/colors.html": ("colors.html", "text/html"),
+         "/colors.css": ("colors.css", "text/css"),
+         "/colors.js": ("colors.js", "text/javascript")}
 
 
 def create_server(port=8765, cache=None):

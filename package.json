@@ -1,9 +1,9 @@
 {
   "name": "codex-fruity-quota",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "Codex 果味额度条 — Apple-inspired black and gray sidebar quota icon, adapted from MIT-licensed codex-usage-badge",
+  "description": "Codex 果味额度条 — fixed sidebar quota icon with six saved color themes",
   "engines": {
     "node": ">=24"
   },

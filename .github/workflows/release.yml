@@ -36,5 +36,5 @@ jobs:
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" dist/*.zip dist/SHA256SUMS.txt --clobber
           else
-            gh release create "$GITHUB_REF_NAME" dist/*.zip dist/SHA256SUMS.txt --verify-tag --title "Codex 果味额度条 $GITHUB_REF_NAME" --notes "Fixed quota icon, weekly-only account support, verified packages and background updates. Live Codex compatibility still requires user verification."
+            gh release create "$GITHUB_REF_NAME" dist/*.zip dist/SHA256SUMS.txt --verify-tag --title "Codex 果味额度条 $GITHUB_REF_NAME" --notes "Six saved color themes in the quota details panel; Battery Green alone turns the outer arc red at 30% remaining. Weekly-only support, verified packages and six-hour background updates. Users of 0.3.0 must manually reinstall once to migrate the renamed repository. Live Codex compatibility still requires user verification."
           fi

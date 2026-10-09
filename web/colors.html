@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>果味额度条 · 配色样板</title>
+  <link rel="stylesheet" href="/colors.css">
+  <script type="module" src="/colors.js"></script>
+</head>
+<body>
+  <header class="topbar"><a href="/colors.html">Codex <span>果味额度条</span></a><span class="prototype-tag">配色样板</span></header>
+  <main>
+    <div class="intro"><p class="eyebrow">一点颜色，刚刚好。</p><h1>给额度，换个喜欢的颜色。</h1><p>保留熟悉的圆弧和四个点，让它更像你的 Codex。</p></div>
+    <div class="layout">
+      <section class="preview-panel" aria-label="额度图标预览">
+        <div class="preview-heading"><span>实时预览</span><div class="appearance" aria-label="预览外观"><button type="button" data-appearance="light" aria-pressed="true">浅色</button><button type="button" data-appearance="dark" aria-pressed="false">深色</button></div></div>
+        <div class="icon-stage" id="icon-stage">
+          <span class="stage-kicker" id="selected-name">经典黑</span>
+          <quota-orbit id="hero-icon" class="demo-icon"></quota-orbit>
+          <div class="remaining"><strong id="ring-number">75</strong><span>% 剩余</span></div>
+          <p id="ring-state" class="ring-state" aria-live="polite">保持经典配色</p>
+        </div>
+        <div class="client-preview" id="client-preview" aria-label="模拟 Codex 侧栏，额度图标位于帮助和头像上方">
+          <aside class="mock-rail">
+            <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 10 8-7 8 7v10h-6v-6h-4v6H4z"/></svg>
+            <svg class="clock-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>
+            <div class="rail-space"></div>
+            <quota-orbit id="sidebar-icon" class="demo-icon"></quota-orbit>
+            <span class="help" aria-hidden="true">?</span><span class="avatar" aria-hidden="true">U</span>
+          </aside>
+          <div class="mock-projects"><strong>Codex</strong><p>＋ 新建聊天</p><small>项目</small><div class="active-project">果味额度条</div><p class="mock-chat">图标与配色</p></div>
+          <div class="mock-conversation"><span>界面示意</span><div class="mock-message"><div class="message-line long"></div><div class="message-line"></div><div class="message-line short"></div></div><div class="mock-composer">开始一个任务 <span>↑</span></div></div>
+        </div>
+        <div class="preview-footer"><span>固定在头像上方</span><span>演示数据</span></div>
+      </section>
+      <section class="settings-panel" aria-label="配色选择与演示设置">
+        <h2>挑一种果味</h2><p class="settings-description">颜色只用于可用额度，已用部分保持灰色。</p>
+        <fieldset class="palette-options"><legend class="sr-only">图标颜色</legend>
+          <label class="palette-option"><input type="radio" name="palette" value="classic" checked><span class="color-chip" data-chip="classic"></span><span>经典黑</span><span class="selected-mark" aria-hidden="true">✓</span></label>
+          <label class="palette-option"><input type="radio" name="palette" value="blue"><span class="color-chip" data-chip="blue"></span><span>晴空蓝</span><span class="selected-mark" aria-hidden="true">✓</span></label>
+          <label class="palette-option"><input type="radio" name="palette" value="purple"><span class="color-chip" data-chip="purple"></span><span>雾紫</span><span class="selected-mark" aria-hidden="true">✓</span></label>
+          <label class="palette-option"><input type="radio" name="palette" value="battery"><span class="color-chip" data-chip="battery"></span><span>电量绿</span><span class="selected-mark" aria-hidden="true">✓</span></label>
+          <label class="palette-option"><input type="radio" name="palette" value="peach"><span class="color-chip" data-chip="peach"></span><span>蜜桃粉</span><span class="selected-mark" aria-hidden="true">✓</span></label>
+          <label class="palette-option"><input type="radio" name="palette" value="amber"><span class="color-chip" data-chip="amber"></span><span>暖琥珀</span><span class="selected-mark" aria-hidden="true">✓</span></label>
+        </fieldset>
+        <div class="battery-note"><span class="note-dot" aria-hidden="true"></span><p><strong>电量绿的小提醒</strong><br>剩余 ≤30% 时，只有外圈变红。四个点和重置数字仍保持绿色。</p></div>
+        <div class="divider"></div>
+        <div class="quota-modes" aria-label="账户额度类型"><button type="button" data-mode="standard" aria-pressed="true">5 小时额度</button><button type="button" data-mode="weekly" aria-pressed="false">仅周额度 / Pro</button></div>
+        <div class="slider-heading"><label for="remaining">外圈剩余额度</label><output for="remaining" id="remaining-output">75%</output></div>
+        <input id="remaining" type="range" min="0" max="100" value="75" step="1" aria-describedby="slider-note">
+        <div class="range-labels"><span>0%</span><span>100%</span></div>
+        <div class="quick-values" aria-label="快速预览剩余额度"><button type="button" data-remaining="75">75%</button><button type="button" data-remaining="31">31%</button><button type="button" data-remaining="30">30%</button><button type="button" data-remaining="15">15%</button></div>
+        <p class="slider-note" id="slider-note">外圈表示 5 小时额度；四点示意周额度剩余 50%。</p>
+        <label class="reset-toggle"><span>显示可用重置次数 <small>示意为 2 次</small></span><input id="show-resets" type="checkbox" checked><span class="toggle-ui" aria-hidden="true"></span></label>
+        <button id="reset-colors" class="reset-colors" type="button">恢复经典黑</button>
+      </section>
+    </div>
+    <footer>配色交互样板 · 颜色选择会保存在此预览中</footer>
+  </main>
+</body>
+</html>

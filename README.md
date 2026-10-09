@@ -2,7 +2,7 @@
 
 ![Codex 果味额度条宣传图](docs/images/promo.png)
 
-[macOS 下载](https://github.com/y2675632584-hub/codex-fruity-quota/releases/tag/v0.3.0-macos) · [Windows 下载](https://github.com/y2675632584-hub/codex-fruity-quota/releases/tag/v0.3.0-windows)
+[macOS 下载](https://github.com/y2675632584-hub/codex-fruity-quota/releases/tag/v0.4.0-macos) · [Windows 下载](https://github.com/y2675632584-hub/codex-fruity-quota/releases/tag/v0.4.0-windows)
 
 「果味」指苹果风格：白底、黑灰图标与简洁的状态显示。
 
@@ -11,6 +11,8 @@
 - **外圈**：优先显示 5 小时剩余额度；账户没有该额度窗口（如仅周额度的 Pro）时改为周额度，外圈与四点都使用周额度。余量越少，圆弧越短。
 - **下方四点**：本周额度，每用完 25% 一个点变灰。已用 0 / 25 / 50 / 75 / 100% 时分别亮 4 / 3 / 2 / 1 / 0 个点。
 - **中央数字**：账户实际可用重置次数；0 次或数据未知时隐藏。点击只查看详情，不会使用重置次数。
+- **配色**：点击头像上方的额度图标，在详情面板的「图标配色」中选择经典黑、晴空蓝、雾紫、电量绿、蜜桃粉或暖琥珀。立即生效，并在当前客户端本地保存；其他窗口同步选择。
+- **低额度提醒**：仅电量绿在外圈剩余 ≤30% 时变红；周额度圆点和重置数字保持绿色，其他配色不变。无 5 小时额度时按周额度判断。
 - 数据约每 60 秒读取；未知额度用空心点表示，过期数据变淡，不冒充满额或实时状态。
 
 ![Codex 果味额度条功能介绍](docs/images/features.png)
@@ -25,15 +27,15 @@
 
 项目已更名为 **Codex 果味额度条**，仓库为 `codex-fruity-quota`。原有安装目录、服务名和 ZIP 文件名保留 `CodexOrbit`，避免重复安装。
 
-已发布的 **0.3.0 ZIP 没有因改名而重新打包**，仍携带旧更新源。旧版更新器会拒绝改名后的下载地址；新版本发布后，需要手动下载并重新安装一次。本次已同步源码更新配置，未发布新版安装包。
+**0.3.0 ZIP 仍携带旧更新源**，旧版更新器会拒绝改名后的下载地址。请手动下载 **0.4.0** 并重新安装一次，之后使用本项目的新仓库自动更新。0.4.0 新增六种配色、选择保存和仅绿色的低额度提醒。
 
 ## 安装（macOS）
 
 要求 macOS 14+，Intel 或 Apple Silicon；已安装并登录带 Codex CLI 的 Codex 桌面应用；Node.js 24+。安装入口优先使用客户端随附的 Node，没有时需自行安装 Node 24。
 
-1. 解压 `CodexOrbit-macOS-0.3.0.zip`，保持文件夹完整，双击 **安装.command**。
+1. 解压 `CodexOrbit-macOS-0.4.0.zip`，保持文件夹完整，双击 **安装.command**。
 2. 保存当前工作，用 **⌘Q** 完全退出 Codex，再从原来的图标打开，等待约 5–10 秒。
-3. 图标应出现在左侧栏帮助／头像区域上方；点击查看两种额度与重置时间。
+3. 图标应出现在左侧栏帮助／头像区域上方；点击查看两种额度与重置时间，或在「图标配色」里切换颜色。点击面板外、关闭按钮或按 Esc 收起。
 
 启动助手只尝试重新打开刚启动、在前台且尚未接收到输入的客户端；已有运行中的窗口不会因安装被退出。如果首次启动时操作太快而跳过接入，完全退出后双击 **打开 Codex.command**。它会直接带接入参数启动，不会强制结束现有聊天。
 
@@ -53,7 +55,7 @@ macOS 后台每 **6 小时**检查本项目 GitHub Releases，启动时也会检
 
 ## Windows 下载与使用
 
-完整解压 `CodexOrbit-Windows-0.3.0.zip`，双击 `Install.cmd`；保存工作并从托盘／菜单完全退出 Codex，再从原图标重开。支持 Windows 10 / 11，当前用户安装，无需管理员权限，自动查找 Store／普通桌面客户端与 Node 24。
+完整解压 `CodexOrbit-Windows-0.4.0.zip`，双击 `Install.cmd`；保存工作并从托盘／菜单完全退出 Codex，再从原图标重开。支持 Windows 10 / 11，当前用户安装，无需管理员权限，自动查找 Store／普通桌面客户端与 Node 24。
 
 Windows 同样每 6 小时检查自己的 Windows Releases，校验下载和包内文件，安装失败回滚。`Launch.cmd`、`Status.cmd`、`Update.cmd`、`Uninstall.cmd` 提供手动启动、诊断、更新、卸载。[详细说明](docs/windows.md)。当前 macOS 开发环境无法实机验证 Windows；Windows 原生检查 CI 已通过；真实客户端兼容性仍需安装后验收。
 
@@ -78,7 +80,7 @@ python3 scripts/build_release.py --platform Windows
 
 macOS 原生构建需要 Node 24、Python 3.9+ 与 Xcode Command Line Tools；Windows 包可跨平台生成。没有 npm 依赖，也无需 npm install。原生启动助手同时编译 arm64 / x86_64，使用本地临时签名；分发包尚未经过 Apple 公证。
 
-本地预览：双击 `Start Preview.command` 或运行 `python3 -m orbit.server --port 8765`，打开 `http://127.0.0.1:8765/`。这是模拟导航栏，用与实际接入相同的图标代码验证位置；它不向 Codex 注入内容。`/index.html` 是可复用 Web Component 的独立预览。
+本地预览：双击 `Start Preview.command` 或运行 `python3 -m orbit.server --port 8765`，打开 `http://127.0.0.1:8765/`。这是模拟导航栏，用与实际接入相同的图标代码验证位置；它不向 Codex 注入内容。`/index.html` 是可复用 Web Component 的独立预览；`/colors.html` 是六种配色的演示样板。正式交互在 `/rail.html`，点击左下角图标打开配色面板。
 
 ## 验证范围
 
@@ -88,6 +90,6 @@ macOS 原生构建需要 Node 24、Python 3.9+ 与 Xcode Command Line Tools；Wi
 
 ## 开源发布
 
-源码采用 MIT，保留原项目许可。可以将本仓库推送到自己的 GitHub 仓库，使用标签 `v0.3.0-macos` 与 `v0.3.0-windows` 分别发布，两种 ZIP 与 `dist/SHA256SUMS.txt` 附在对应 Release，让别人解压安装；更新源配置为 `y2675632584-hub/codex-fruity-quota`，发布状态见交付说明。
+源码采用 MIT，保留原项目许可。可以将本仓库推送到自己的 GitHub 仓库，使用标签 `v0.4.0-macos` 与 `v0.4.0-windows` 分别发布，两种 ZIP 与 `dist/SHA256SUMS.txt` 附在对应 Release，让别人解压安装；更新源配置为 `y2675632584-hub/codex-fruity-quota`，发布状态见交付说明。
 
 请不要提交本机配置、运行日志、账号数据或预览中的个人额度。`.gitignore` 已排除这些目录；打包脚本使用明确文件清单，不包含个人设置或参考截图。GitHub Actions 的测试流程覆盖 macOS 与 Windows；推送平台版本标签后，发布流程构建、测试并上传对应 ZIP 与校验清单。发版前同步修改 package.json 版本号。欢迎提交兼容性修复；报告问题时提供应用版本、系统版本和经过脱敏的日志。
