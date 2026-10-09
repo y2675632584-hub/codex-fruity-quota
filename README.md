@@ -1,4 +1,6 @@
-# Codex Orbit
+# Codex 额度条
+
+![Codex 额度条宣传图](docs/images/promo.png)
 
 [macOS 下载](https://github.com/y2675632584-hub/codex-orbit/releases/tag/v0.3.0-macos) · [Windows 下载](https://github.com/y2675632584-hub/codex-orbit/releases/tag/v0.3.0-windows)
 
@@ -8,6 +10,10 @@
 - **下方四点**：本周额度，每用完 25% 一个点变灰。已用 0 / 25 / 50 / 75 / 100% 时分别亮 4 / 3 / 2 / 1 / 0 个点。
 - **中央数字**：账户实际可用重置次数；0 次或数据未知时隐藏。点击只查看详情，不会使用重置次数。
 - 数据约每 60 秒读取；未知额度用空心点表示，过期数据变淡，不冒充满额或实时状态。
+
+![Codex 额度条功能介绍](docs/images/features.png)
+
+[下载宣传图](docs/images/promo.png) · [下载功能介绍图](docs/images/features.png) · [图片说明与生成提示词](docs/images/README.md)
 
 复用 [jaykinhoo9/codex-usage-badge](https://github.com/jaykinhoo9/codex-usage-badge) 的 MIT 代码：本机连接、账户额度读取和 macOS 启动助手；按同一定位方式重新实现图标。固定来源提交与校验值见 [SOURCE.json](third_party/codex-usage-badge/SOURCE.json)，许可与改造范围见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。继续复用参考项目的更新校验和 Windows 安装／启动方案；没有加入文件夹配色或 Token 统计。
 

@@ -1,4 +1,10 @@
-# Codex Orbit
+# Codex 额度条 · Codex Quota Bar
+
+![Codex Quota Bar promotional image](docs/images/promo.png)
+
+![Codex Quota Bar features](docs/images/features.png)
+
+Public display name: **Codex 额度条**. Existing release asset names and update URLs continue to use `codex-orbit` for compatibility.
 
 A quota icon inserted into the Codex desktop navigation rail, immediately above the help/profile footer. The icon occupies normal layout space and restores itself after rail rerenders.
 
