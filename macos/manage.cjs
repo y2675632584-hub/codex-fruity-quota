@@ -65,7 +65,7 @@ async function install() {
   const preferences=exists(path.join(installDir,'update-settings.json'))?JSON.parse(fs.readFileSync(path.join(installDir,'update-settings.json'),'utf8')):null;
   if(fromUpdate&&preferences?.enabled===false)throw Error('自动更新已关闭');
   if(fromUpdate){const current=JSON.parse(fs.readFileSync(path.join(installDir,'installed-version.json'),'utf8'));if(current.repository!==metadata.repository||updateCore.compareVersions(metadata.version,current.version)<=0)throw Error('更新来源或版本不匹配');}
-  if(exists(installDir)&&!exists(path.join(installDir,'agent.cjs')))throw Error('目标目录不属于 Codex Orbit');
+  if(exists(installDir)&&!exists(path.join(installDir,'agent.cjs')))throw Error('目标目录不属于 Codex 果味额度条');
   const mapping={'agent.cjs':path.join(payload,'agent.cjs'),'startup/watch.cjs':path.join(payload,'startup/watch.cjs'),
     'startup/controller.cjs':path.join(payload,'startup/controller.cjs'),'startup/bridge':path.join(payload,'startup/bridge'),
     'updater/core.cjs':path.join(payload,'updater/core.cjs'),'updater/worker.cjs':path.join(payload,'updater/worker.cjs'),
@@ -115,7 +115,7 @@ async function install() {
       throw Error('新版后台未就绪，已恢复原版本');
     }});
   if(!fromUpdate)loadService(updateLabel);
-  console.log('Codex Orbit '+metadata.version+' 后台已安装；自动更新每 6 小时检查自己的 GitHub Releases。');
+  console.log('Codex 果味额度条 '+metadata.version+' 后台已安装；自动更新每 6 小时检查自己的 GitHub Releases。');
   if(!fromUpdate)console.log('请保存工作，用 ⌘Q 完全退出 Codex，再从原图标打开。');
   if(result.backup)console.log('原版本备份：'+result.backup);
 }
@@ -154,7 +154,7 @@ async function uninstall() {
     const file=path.join(launchDir,`${name}.plist`);
     if (exists(file)) fs.renameSync(file,path.join(home,'.Trash',`${name}-${Date.now()}.plist`));
   }
-  console.log('Codex Orbit 已移到废纸篓。请退出并重新打开 Codex，以移除图标和关闭调试接口。');
+  console.log('Codex 果味额度条 已移到废纸篓。请退出并重新打开 Codex，以移除图标和关闭调试接口。');
 }
 module.exports = { findApp, plist, label, startupLabel, updateLabel };
 if (require.main === module) {

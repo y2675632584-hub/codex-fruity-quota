@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {sanitizeOrbitUsage}=require('../build/agent.cjs');
 const {createUpdater}=require('../build/updater/core.cjs');
 const {replaceInstallation}=require('../macos/transaction.cjs');
-const repo='y2675632584-hub/codex-orbit',core=createUpdater(repo);
+const repo=require('../release.json').repository,core=createUpdater(repo);
 const packageVersion=require('../package.json').version;
 const macZip=path.join(__dirname,`../dist/CodexOrbit-macOS-${packageVersion}.zip`);
 const hasMacZip=fs.existsSync(macZip);

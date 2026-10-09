@@ -21,7 +21,7 @@
 | 更新成功与失败回滚 | 通过 | 隔离安装目录模拟更新，确认版本；模拟新版启动失败，恢复旧程序及外部配置；成功保留备份 |
 | Windows 下载包 | 通过 | 已生成 ZIP，跨平台额度与更新逻辑测试通过，包含 Node 运行逻辑和原生启动源文件 |
 | Windows 原生 CI | 通过 | GitHub Windows Runner 通过构建、20 项 Node 测试（3 项 macOS ZIP 测试跳过）、PowerShell 解析、原生 C# 编译、输入分类与 ZIP 校验 |
-| GitHub 仓库 | 已创建 | y2675632584-hub/codex-orbit 公开仓库；macOS 与 Windows CI 均通过，记录 https://github.com/y2675632584-hub/codex-orbit/actions/runs/37890269671；下载发布状态见 Releases |
+| GitHub 仓库 | 已创建 | y2675632584-hub/codex-fruity-quota 公开仓库；macOS 与 Windows CI 均通过，记录 https://github.com/y2675632584-hub/codex-fruity-quota/actions/runs/37890269671；下载发布状态见 Releases |
 
 本地浏览器截图是模拟界面的验证证据，不是已经在真实 Codex 中安装成功的截图。启动助手逻辑使用隔离适配器测试；真实 macOS 启动事件、普通重开、暂停／卸载仍需用户安装后验收。
 

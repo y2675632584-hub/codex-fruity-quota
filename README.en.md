@@ -1,10 +1,10 @@
-# Codex 额度条 · Codex Quota Bar
+# Codex 果味额度条 · Codex Fruity Quota
 
-![Codex Quota Bar promotional image](docs/images/promo.png)
+![Codex Fruity Quota promotional image](docs/images/promo.png)
 
-![Codex Quota Bar features](docs/images/features.png)
+![Codex Fruity Quota features](docs/images/features.png)
 
-Public display name: **Codex 额度条**. Existing release asset names and update URLs continue to use `codex-orbit` for compatibility.
+Public display name: **Codex 果味额度条**. The repository is `codex-fruity-quota`. Existing internal directories, service names and archive names retain `CodexOrbit` for installation compatibility. The published 0.3.0 ZIPs remain unchanged and retain the old update source. Their updater rejects asset URLs under the renamed repository. When a new version is released, manually download and reinstall it once. This change updates source configuration; it does not publish a new installer.
 
 A quota icon inserted into the Codex desktop navigation rail, immediately above the help/profile footer. The icon occupies normal layout space and restores itself after rail rerenders.
 
@@ -48,7 +48,7 @@ The startup bridge is a universal arm64/x86_64 binary with an ad-hoc signature; 
 
 ## Publish
 
-MIT licensed, with upstream attribution retained. Push this source repository to GitHub and attach the generated macOS ZIP and `dist/SHA256SUMS.txt` to a Release. Source and platform downloads are published at https://github.com/y2675632584-hub/codex-orbit. Release packaging uses an explicit allowlist and excludes personal settings, logs, quota snapshots and reference images.
+MIT licensed, with upstream attribution retained. Push this source repository to GitHub and attach the generated macOS ZIP and `dist/SHA256SUMS.txt` to a Release. Source and platform downloads are published at https://github.com/y2675632584-hub/codex-fruity-quota. Release packaging uses an explicit allowlist and excludes personal settings, logs, quota snapshots and reference images.
 
 ## Updates and Windows
 
@@ -56,4 +56,4 @@ macOS updates require a newer matching Release with a GitHub SHA-256 asset diges
 
 Windows 10/11 users can extract `CodexOrbit-Windows-0.3.0.zip` and run `Install.cmd`. The package adapts upstream Store discovery, guarded native relaunch, owned-directory installation, update checks and rollback. Use `Launch.cmd`, `Status.cmd`, `Update.cmd`, and `Uninstall.cmd` for management. Windows uses Node 24 and Windows PowerShell 5.1+. Its native installation and live client placement still require Windows validation; Windows CI has passed script parsing, native helper compilation and archive validation; live Codex compatibility still requires user verification.
 
-The configured repository is `y2675632584-hub/codex-orbit`. Publish tags `vVERSION-macos` and `vVERSION-windows`, with the corresponding ZIP and `SHA256SUMS.txt`. Platform-tag workflows build, test and publish downloads.
+The configured repository is `y2675632584-hub/codex-fruity-quota`. Publish tags `vVERSION-macos` and `vVERSION-windows`, with the corresponding ZIP and `SHA256SUMS.txt`. Platform-tag workflows build, test and publish downloads.

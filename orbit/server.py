@@ -66,7 +66,7 @@ def create_server(port=8765, cache=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Codex Orbit local preview. Does not modify Codex Desktop.")
+    parser = argparse.ArgumentParser(description="Codex 果味额度条 local preview. Does not modify Codex Desktop.")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--once", action="store_true", help="Print sanitized live quota JSON and exit")
     args = parser.parse_args()
@@ -77,7 +77,7 @@ def main():
             parser.exit(1, str(error) + "\n")
         return
     server = create_server(args.port)
-    print(f"Codex Orbit preview: http://127.0.0.1:{server.server_port}", flush=True)
+    print(f"Codex 果味额度条 preview: http://127.0.0.1:{server.server_port}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

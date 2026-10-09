@@ -1,8 +1,10 @@
-# Codex 额度条
+# Codex 果味额度条
 
-![Codex 额度条宣传图](docs/images/promo.png)
+![Codex 果味额度条宣传图](docs/images/promo.png)
 
-[macOS 下载](https://github.com/y2675632584-hub/codex-orbit/releases/tag/v0.3.0-macos) · [Windows 下载](https://github.com/y2675632584-hub/codex-orbit/releases/tag/v0.3.0-windows)
+[macOS 下载](https://github.com/y2675632584-hub/codex-fruity-quota/releases/tag/v0.3.0-macos) · [Windows 下载](https://github.com/y2675632584-hub/codex-fruity-quota/releases/tag/v0.3.0-windows)
+
+「果味」指苹果风格：白底、黑灰图标与简洁的状态显示。
 
 一个固定在 Codex 桌面端左侧导航栏、帮助／头像区域上方的剩余额度图标。它在侧栏布局中占位，窗口移动和侧栏重绘后会恢复位置。
 
@@ -11,13 +13,19 @@
 - **中央数字**：账户实际可用重置次数；0 次或数据未知时隐藏。点击只查看详情，不会使用重置次数。
 - 数据约每 60 秒读取；未知额度用空心点表示，过期数据变淡，不冒充满额或实时状态。
 
-![Codex 额度条功能介绍](docs/images/features.png)
+![Codex 果味额度条功能介绍](docs/images/features.png)
 
 [下载宣传图](docs/images/promo.png) · [下载功能介绍图](docs/images/features.png) · [图片说明与生成提示词](docs/images/README.md)
 
 复用 [jaykinhoo9/codex-usage-badge](https://github.com/jaykinhoo9/codex-usage-badge) 的 MIT 代码：本机连接、账户额度读取和 macOS 启动助手；按同一定位方式重新实现图标。固定来源提交与校验值见 [SOURCE.json](third_party/codex-usage-badge/SOURCE.json)，许可与改造范围见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。继续复用参考项目的更新校验和 Windows 安装／启动方案；没有加入文件夹配色或 Token 统计。
 
 这是第三方运行时界面接入，不是官方插件。它不修改 Codex 应用文件或签名；Codex 更新后如果导航栏结构改变，可能需要调整。找不到目标栏时隐藏图标；检测到原版用量条时也会隐藏，避免重复占位。请先停止原版用量条，再安装此版本。
+
+## 改名说明
+
+项目已更名为 **Codex 果味额度条**，仓库为 `codex-fruity-quota`。原有安装目录、服务名和 ZIP 文件名保留 `CodexOrbit`，避免重复安装。
+
+已发布的 **0.3.0 ZIP 没有因改名而重新打包**，仍携带旧更新源。旧版更新器会拒绝改名后的下载地址；新版本发布后，需要手动下载并重新安装一次。本次已同步源码更新配置，未发布新版安装包。
 
 ## 安装（macOS）
 
@@ -80,6 +88,6 @@ macOS 原生构建需要 Node 24、Python 3.9+ 与 Xcode Command Line Tools；Wi
 
 ## 开源发布
 
-源码采用 MIT，保留原项目许可。可以将本仓库推送到自己的 GitHub 仓库，使用标签 `v0.3.0-macos` 与 `v0.3.0-windows` 分别发布，两种 ZIP 与 `dist/SHA256SUMS.txt` 附在对应 Release，让别人解压安装；更新源配置为 `y2675632584-hub/codex-orbit`，发布状态见交付说明。
+源码采用 MIT，保留原项目许可。可以将本仓库推送到自己的 GitHub 仓库，使用标签 `v0.3.0-macos` 与 `v0.3.0-windows` 分别发布，两种 ZIP 与 `dist/SHA256SUMS.txt` 附在对应 Release，让别人解压安装；更新源配置为 `y2675632584-hub/codex-fruity-quota`，发布状态见交付说明。
 
 请不要提交本机配置、运行日志、账号数据或预览中的个人额度。`.gitignore` 已排除这些目录；打包脚本使用明确文件清单，不包含个人设置或参考截图。GitHub Actions 的测试流程覆盖 macOS 与 Windows；推送平台版本标签后，发布流程构建、测试并上传对应 ZIP 与校验清单。发版前同步修改 package.json 版本号。欢迎提交兼容性修复；报告问题时提供应用版本、系统版本和经过脱敏的日志。

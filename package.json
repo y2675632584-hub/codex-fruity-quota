@@ -1,9 +1,9 @@
 {
-  "name": "codex-orbit",
+  "name": "codex-fruity-quota",
   "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "Codex sidebar quota orbit, adapted from MIT-licensed codex-usage-badge",
+  "description": "Codex 果味额度条 — Apple-inspired black and gray sidebar quota icon, adapted from MIT-licensed codex-usage-badge",
   "engines": {
     "node": ">=24"
   },
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/y2675632584-hub/codex-orbit.git"
+    "url": "https://github.com/y2675632584-hub/codex-fruity-quota.git"
   }
 }

@@ -123,7 +123,7 @@ def read_usage(timeout=20, executable=None):
 
     try:
         send({"method": "initialize", "id": 1, "params": {
-            "clientInfo": {"name": "codex_orbit", "title": "Codex Orbit", "version": "0.3.0"}}})
+            "clientInfo": {"name": "codex_orbit", "title": "Codex 果味额度条", "version": "0.3.0"}}})
         receive(1)
         send({"method": "initialized", "params": {}})
         send({"method": "account/rateLimits/read", "id": 2})

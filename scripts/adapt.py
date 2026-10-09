@@ -22,7 +22,7 @@ def adapt(root, vendor, output, version):
     save('update.json',json.dumps({'schema':1,'repository':release['repository'],'version':version,'platform':'macOS','allowPrerelease':release.get('allowPrerelease',False)},indent=2)+'\n')
     # Windows keeps the upstream ownership guards, Store discovery, native activation and rollback.
     def brand(text):
-        return text.replace('CodexUsageBadge','CodexOrbit').replace('Codex Usage Badge','Codex Orbit').replace('codexusagebadge','codexorbit').replace('codex-usage-badge','codex-orbit').replace('CODEX_BADGE_','CODEX_ORBIT_').replace('Codex 用量条','Codex Orbit')
+        return text.replace('CodexUsageBadge','CodexOrbit').replace('Codex Usage Badge','Codex 果味额度条').replace('codexusagebadge','codexorbit').replace('codex-usage-badge','codex-orbit').replace('CODEX_BADGE_','CODEX_ORBIT_').replace('Codex 用量条','Codex 果味额度条')
     manager=brand(source('windows/manage-windows.ps1')).replace("$script:Version = '0.10.1'",f"$script:Version = '{version}'")
     manager=manager.replace('const{DatabaseSync}=require("node:sqlite");new DatabaseSync(":memory:").close();','').replace('（需 node:sqlite）','')
     manager=manager.replace("'Update.cmd','README-Windows.md'","'Update.cmd','README-Windows.md','LICENSE','UPSTREAM_LICENSE','THIRD_PARTY_NOTICES.md','update.json'")

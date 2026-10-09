@@ -1,6 +1,6 @@
 # Third-party notices
 
-Codex Orbit includes and adapts code from
+Codex 果味额度条 includes and adapts code from
 [jaykinhoo9/codex-usage-badge](https://github.com/jaykinhoo9/codex-usage-badge),
 commit `d014efcd7735a4349576c6b424cac23b614f9115` (MIT).
 
@@ -21,7 +21,7 @@ The vendored files are kept unchanged. `scripts/build.py` checks their recorded 
 
 1. Inject only Orbit's quota component; omit project colors, file sizes, and chat token features.
 2. Rename the renderer namespace from `__codexUsageBadge` to `__codexOrbit`.
-3. Identify the App Server client as `codex_orbit` / `Codex Orbit`.
+3. Identify the App Server client as `codex_orbit` / `Codex 果味额度条`.
 
 Orbit's icon and reset-count handling are original additions. The macOS installer uses its own service names and installation directory. Update validation is adapted for this project’s own GitHub Releases; no installation package is fetched from the upstream repository.
 

@@ -1,5 +1,5 @@
 [project]
-name = "codex-orbit"
+name = "codex-fruity-quota"
 version = "0.3.0"
 description = "A compact Codex quota component and a read-only local usage bridge"
 requires-python = ">=3.9"
