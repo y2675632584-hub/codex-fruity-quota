@@ -41,7 +41,7 @@ macOS 后台每 **6 小时**检查本项目 GitHub Releases，启动时也会检
 
 完整解压 `CodexOrbit-Windows-0.3.0.zip`，双击 `Install.cmd`；保存工作并从托盘／菜单完全退出 Codex，再从原图标重开。支持 Windows 10 / 11，当前用户安装，无需管理员权限，自动查找 Store／普通桌面客户端与 Node 24。
 
-Windows 同样每 6 小时检查自己的 Windows Releases，校验下载和包内文件，安装失败回滚。`Launch.cmd`、`Status.cmd`、`Update.cmd`、`Uninstall.cmd` 提供手动启动、诊断、更新、卸载。[详细说明](docs/windows.md)。当前 macOS 开发环境无法实机验证 Windows；已提供 Windows 原生检查 CI。
+Windows 同样每 6 小时检查自己的 Windows Releases，校验下载和包内文件，安装失败回滚。`Launch.cmd`、`Status.cmd`、`Update.cmd`、`Uninstall.cmd` 提供手动启动、诊断、更新、卸载。[详细说明](docs/windows.md)。当前 macOS 开发环境无法实机验证 Windows；Windows 原生检查 CI 已通过；真实客户端兼容性仍需安装后验收。
 
 ## 诊断、停止与卸载
 
