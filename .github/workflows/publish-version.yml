@@ -1,0 +1,73 @@
+name: Publish version
+on:
+  push:
+    branches: [main]
+    paths: ['package.json', '.github/workflows/publish-version.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish-version
+  cancel-in-progress: false
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            platform: macOS
+            suffix: macos
+          - os: windows-latest
+            platform: Windows
+            suffix: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check version and existing release
+        id: version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SUFFIX: ${{ matrix.suffix }}
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          node -e 'if(!/^\d+\.\d+\.\d+$/.test(require("./package.json").version))process.exit(1)'
+          tag="v$version-$RELEASE_SUFFIX"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.version.outputs.exists == 'false'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - if: steps.version.outputs.exists == 'false' && runner.os == 'macOS'
+        run: python scripts/build.py --native
+      - if: steps.version.outputs.exists == 'false' && runner.os == 'Windows'
+        run: python scripts/build.py
+      - if: steps.version.outputs.exists == 'false'
+        run: python scripts/build_release.py --platform ${{ matrix.platform }}
+      - if: steps.version.outputs.exists == 'false'
+        run: node --test
+      - if: steps.version.outputs.exists == 'false' && runner.os == 'macOS'
+        run: python -m unittest discover -s tests -v
+      - if: steps.version.outputs.exists == 'false' && runner.os == 'Windows'
+        shell: powershell
+        run: .\tests\windows-native.ps1
+      - name: Publish verified package
+        if: steps.version.outputs.exists == 'false'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_PLATFORM: ${{ matrix.platform }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/*.zip dist/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Codex 果味额度条 $RELEASE_VERSION ($RELEASE_PLATFORM)" --notes-file RELEASE_NOTES.md
