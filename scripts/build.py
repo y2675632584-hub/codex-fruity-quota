@@ -35,7 +35,11 @@ def build(native=False):
     (output / 'startup').mkdir(parents=True, exist_ok=True)
     (output / 'agent.cjs').write_text('\n\n'.join(parts) + '\n',encoding='utf-8')
     for name in ['watch.cjs','controller.cjs']:
-        (output / 'startup' / name).write_bytes((VENDOR / 'macos/startup' / name).read_bytes())
+        text = (VENDOR / 'macos/startup' / name).read_text(encoding='utf-8')
+        if name == 'watch.cjs':
+            text = replace_once(text, 'state={...state,...details,event,updatedAt:Date.now()};',
+                                'state={...state,...details,event,pid:process.pid,updatedAt:Date.now()};')
+        (output / 'startup' / name).write_text(text,encoding='utf-8')
     from adapt import adapt
     adapt(ROOT, VENDOR, output, version)
     if native:

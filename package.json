@@ -1,6 +1,6 @@
 {
   "name": "codex-fruity-quota",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "type": "module",
   "description": "Codex 果味额度条 — fixed sidebar quota icon with six saved color themes",

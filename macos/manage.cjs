@@ -37,6 +37,17 @@ function loadService(name) {
     run('/bin/launchctl',['kickstart',`${domain}/${name}`]);
   }
 }
+function servicePid(name) {
+  try {
+    const output=run('/bin/launchctl',['print',`${domain}/${name}`]);
+    return /\bstate = running\b/.test(output) ? Number(output.match(/\bpid = (\d+)\b/)?.[1]) || null : null;
+  } catch { return null; }
+}
+function installationReady({receipt,watcher,version,started,agentPid,startupPid}) {
+  return Number.isInteger(agentPid) && agentPid>0 && Number.isInteger(startupPid) && startupPid>0
+    && receipt?.version===version && receipt?.pid===agentPid && watcher?.pid===startupPid
+    && receipt?.startedAt>=started && receipt?.updatedAt>=started && watcher?.updatedAt>=started;
+}
 function portReady(port=39222) {
   return new Promise(resolve => {
     const socket = net.createConnection({host:'127.0.0.1',port});
@@ -104,15 +115,22 @@ async function install() {
     start:({rollback})=>{if(!rollback)for(const[file,text]of specs)fs.writeFileSync(file,text,{mode:0o600});loadService(label);loadService(startupLabel);if(rollback&&!fromUpdate&&exists(path.join(launchDir,updateLabel+'.plist')))loadService(updateLabel);},
     restoreExternal:()=>{for(const[file,data]of previous){if(data)fs.writeFileSync(file,data,{mode:0o600});else if(exists(file))fs.unlinkSync(file);}},
     probe:async()=>{
+      let readyPid = null;
       for(let i=0;i<60;i++){
         try{
           const receipt=JSON.parse(fs.readFileSync(path.join(installDir,'runtime-state.json'),'utf8'));
           const watcher=JSON.parse(fs.readFileSync(path.join(installDir,'startup/state.json'),'utf8'));
-          if(receipt.version===metadata.version&&receipt.updatedAt>=started&&watcher.updatedAt>=started)return;
+          const agentPid=servicePid(label),startupPid=servicePid(startupLabel);
+          if(installationReady({receipt,watcher,version:metadata.version,started,agentPid,startupPid})){
+            const pair=`${agentPid}:${startupPid}`;
+            if(readyPid===pair)return;
+            readyPid=pair;
+          }else readyPid=null;
         }catch{}
         await new Promise(resolve=>setTimeout(resolve,500));
       }
-      throw Error('新版后台未就绪，已恢复原版本');
+      const reason=!servicePid(label)?'额度后台未运行':!servicePid(startupLabel)?'启动助手未运行':'后台启动记录未确认';
+      throw Error(`${reason}，已恢复原版本。请查看 ~/Library/Logs/CodexOrbit 的后台日志。`);
     }});
   if(!fromUpdate)loadService(updateLabel);
   console.log('Codex 果味额度条 '+metadata.version+' 后台已安装；自动更新每 6 小时检查自己的 GitHub Releases。');
@@ -156,7 +174,7 @@ async function uninstall() {
   }
   console.log('Codex 果味额度条 已移到废纸篓。请退出并重新打开 Codex，以移除图标和关闭调试接口。');
 }
-module.exports = { findApp, plist, label, startupLabel, updateLabel };
+module.exports = { findApp, plist, label, startupLabel, updateLabel, installationReady };
 if (require.main === module) {
   const action = process.argv[2];
   const handlers = { install, launch, status, stop, uninstall, update:()=>require(path.join(installDir,'updater/worker.cjs')).main(['update']), 'update-status':()=>require(path.join(installDir,'updater/worker.cjs')).main(['status']), 'updates-on':()=>require(path.join(installDir,'updater/worker.cjs')).main(['enable']), 'updates-off':()=>require(path.join(installDir,'updater/worker.cjs')).main(['disable']) };
