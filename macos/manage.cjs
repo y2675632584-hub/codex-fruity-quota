@@ -26,17 +26,47 @@ function plist(spec) {
   const encode = value => Array.isArray(value) ? `<array>${value.map(encode).join('')}</array>` : typeof value === 'boolean' ? `<${value}/>` : typeof value === 'number' ? `<integer>${value}</integer>` : value && typeof value === 'object' ? `<dict>${Object.entries(value).map(([key,item])=>`<key>${xml(key)}</key>${encode(item)}`).join('')}</dict>` : `<string>${xml(value)}</string>`;
   return `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0">${encode(spec)}</plist>\n`;
 }
-function stopService(name) {
-  try { run('/bin/launchctl',['bootout',`${domain}/${name}`]); } catch {}
-}
-function loadService(name) {
-  const file = path.join(launchDir,`${name}.plist`);
-  if (!exists(file)) throw new Error('请先运行安装.command');
-  // launchctl kickstart cannot start a service that has not been bootstrapped.
-  try { run('/bin/launchctl',['bootstrap',domain,file]); } catch {
-    run('/bin/launchctl',['kickstart',`${domain}/${name}`]);
+// bootout returns before launchd finishes removing a terminating job.
+// Never kickstart that old job as a substitute for registering the replacement.
+function createServiceManager({run,domain,launchDir,exists=fs.existsSync,
+  wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),attempts=100}) {
+  function registered(name) {
+    try { run('/bin/launchctl',['print',`${domain}/${name}`]); return true; }
+    catch(error) {
+      if(/Could not find (?:specified )?service/i.test(String(error.stderr)) || error.status===113)return false;
+      throw error;
+    }
   }
+  async function stop(name) {
+    try { run('/bin/launchctl',['bootout',`${domain}/${name}`]); }
+    catch(error) { if(registered(name))throw error; }
+    for(let i=0;i<attempts;i++) {
+      if(!registered(name))return;
+      await wait(100);
+    }
+    throw Error('旧后台尚未完全退出：'+name+'。安装已停止，请稍后重试。');
+  }
+  async function load(name) {
+    const file=path.join(launchDir,`${name}.plist`);
+    if(!exists(file))throw Error('请先运行安装.command');
+    if(registered(name)) { run('/bin/launchctl',['kickstart',`${domain}/${name}`]); return; }
+    let failure;
+    for(let i=0;i<attempts;i++) {
+      try { run('/bin/launchctl',['bootstrap',domain,file]); return; }
+      catch(error) {
+        failure=error;
+        // A just-removed job can still be busy inside launchd. Retry registration.
+        // Permanent errors are reported with their original cause.
+        if(!/(?:in progress|Input\/output error)/i.test(String(error.stderr)) && ![5,37].includes(error.status))throw error;
+        await wait(100);
+      }
+    }
+    throw failure;
+  }
+  return {stop,load};
 }
+const services=createServiceManager({run,domain,launchDir,exists});
+const stopService=services.stop,loadService=services.load;
 function servicePid(name) {
   try {
     const output=run('/bin/launchctl',['print',`${domain}/${name}`]);
@@ -108,11 +138,11 @@ async function install() {
     if(name===updateLabel)spec.StartInterval=21600;else{spec.KeepAlive={SuccessfulExit:false};spec.ThrottleInterval=10;}
     specs.set(path.join(launchDir,name+'.plist'),plist(spec));
   }
-  if(!fromUpdate)stopService(updateLabel);
+  if(!fromUpdate)await stopService(updateLabel);
   const started=Date.now();
   const result=await require('./transaction.cjs').replaceInstallation({live:installDir,stage,
-    stop:()=>{stopService(startupLabel);stopService(label);},
-    start:({rollback})=>{if(!rollback)for(const[file,text]of specs)fs.writeFileSync(file,text,{mode:0o600});loadService(label);loadService(startupLabel);if(rollback&&!fromUpdate&&exists(path.join(launchDir,updateLabel+'.plist')))loadService(updateLabel);},
+    stop:async()=>{await stopService(startupLabel);await stopService(label);},
+    start:async({rollback})=>{if(!rollback)for(const[file,text]of specs)fs.writeFileSync(file,text,{mode:0o600});await loadService(label);await loadService(startupLabel);if(rollback&&!fromUpdate&&exists(path.join(launchDir,updateLabel+'.plist')))await loadService(updateLabel);},
     restoreExternal:()=>{for(const[file,data]of previous){if(data)fs.writeFileSync(file,data,{mode:0o600});else if(exists(file))fs.unlinkSync(file);}},
     probe:async()=>{
       let readyPid = null;
@@ -132,14 +162,14 @@ async function install() {
       const reason=!servicePid(label)?'额度后台未运行':!servicePid(startupLabel)?'启动助手未运行':'后台启动记录未确认';
       throw Error(`${reason}，已恢复原版本。请查看 ~/Library/Logs/CodexOrbit 的后台日志。`);
     }});
-  if(!fromUpdate)loadService(updateLabel);
+  if(!fromUpdate)await loadService(updateLabel);
   console.log('Codex 果味额度条 '+metadata.version+' 后台已安装；自动更新每 6 小时检查自己的 GitHub Releases。');
   if(!fromUpdate)console.log('请保存工作，用 ⌘Q 完全退出 Codex，再从原图标打开。');
   if(result.backup)console.log('原版本备份：'+result.backup);
 }
 async function launch() {
   const settings = config();
-  loadService(label);
+  await loadService(label);
   if (await portReady()) { console.log('本机调试端口已开启，等待组件连接。'); return; }
   if (nativeSnapshot(settings.app).apps.length) throw new Error('Codex 仍在运行。请先按 ⌘Q 完全退出，再运行打开 Codex.command。不会强制结束你的聊天。');
   run('/usr/bin/open',['-a',settings.app,'--args','--remote-debugging-address=127.0.0.1','--remote-debugging-port=39222']);
@@ -158,7 +188,7 @@ async function status() {
   console.log('若左下角未出现图标：先彻底退出并重开 Codex，再查看额度后台日志。');
 }
 async function stop() {
-  stopService(updateLabel); stopService(startupLabel); stopService(label);
+  await stopService(updateLabel); await stopService(startupLabel); await stopService(label);
   console.log('后台已停止。当前窗口中的图标会随 Codex 退出移除；重开普通 Codex 可关闭调试端口。');
 }
 async function uninstall() {
@@ -174,7 +204,7 @@ async function uninstall() {
   }
   console.log('Codex 果味额度条 已移到废纸篓。请退出并重新打开 Codex，以移除图标和关闭调试接口。');
 }
-module.exports = { findApp, plist, label, startupLabel, updateLabel, installationReady };
+module.exports = { findApp, plist, label, startupLabel, updateLabel, installationReady, createServiceManager };
 if (require.main === module) {
   const action = process.argv[2];
   const handlers = { install, launch, status, stop, uninstall, update:()=>require(path.join(installDir,'updater/worker.cjs')).main(['update']), 'update-status':()=>require(path.join(installDir,'updater/worker.cjs')).main(['status']), 'updates-on':()=>require(path.join(installDir,'updater/worker.cjs')).main(['enable']), 'updates-off':()=>require(path.join(installDir,'updater/worker.cjs')).main(['disable']) };

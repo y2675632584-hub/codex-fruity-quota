@@ -2,7 +2,7 @@
 
 适用于 Windows 10 / 11、Windows PowerShell 5.1+、已登录的 Codex 桌面客户端与 Node.js 24+。安装器自动查找 Microsoft Store / 普通桌面版客户端、CLI 和客户端 Node；找不到 Node 时需自行安装 Node 24。
 
-1. 完整解压 `CodexOrbit-Windows-0.4.1.zip`。
+1. 完整解压 `CodexOrbit-Windows-0.4.2.zip`。
 2. 双击 `Install.cmd`。安装当前用户后台，不需要管理员权限。
 3. 保存工作，从托盘或菜单完全退出 Codex，再从原来的图标打开，等待自动加载。
 
