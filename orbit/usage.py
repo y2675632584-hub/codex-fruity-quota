@@ -67,7 +67,19 @@ def normalize(payload, now=None):
     credits = payload.get("rateLimitResetCredits")
     count = credits.get("availableCount") if isinstance(credits, dict) else None
     count = count if isinstance(count, int) and not isinstance(count, bool) and count >= 0 else None
+    rows = credits.get("credits") if isinstance(credits, dict) else None
+    expirations = []
+    if count and isinstance(rows, list):
+        for item in rows:
+            if not isinstance(item, dict) or item.get("status") != "available" or item.get("resetType") != "codexRateLimits" or "expiresAt" not in item:
+                continue
+            expiry = item["expiresAt"]
+            if expiry is None or (isinstance(expiry, int) and not isinstance(expiry, bool) and 0 < expiry <= 8640000000000):
+                expirations.append(expiry)
+                if len(expirations) >= min(count, 100):
+                    break
     result = {"fiveHour": window(300), "weekly": window(10080), "resetCount": count,
+              "resetExpirations": expirations,
               "ringWindow": "fiveHour" if any(w.get("windowDurationMins") == 300 for w in windows) else "weekly" if window(10080) else None,
               "fetchedAt": time.time() if now is None else now, "source": "codex-app-server",
               "status": "live"}

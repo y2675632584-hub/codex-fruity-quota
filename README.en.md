@@ -4,15 +4,16 @@
 
 ![Codex Fruity Quota features](docs/images/features.png)
 
-Public display name: **Codex 果味额度条**. The repository is `codex-fruity-quota`. Existing internal directories, service names and archive names retain `CodexOrbit` for installation compatibility. The published 0.3.0 ZIPs remain unchanged and retain the old update source. Their updater rejects asset URLs under the renamed repository. Manually download and reinstall 0.5.0 once to migrate to the new update source. Version 0.5.0 adds hover-only daily conversation tokens, retaining saved color themes, the green-only warning and installer fixes.
+Public display name: **Codex 果味额度条**. The repository is `codex-fruity-quota`. Existing internal directories, service names and archive names retain `CodexOrbit` for installation compatibility. The published 0.3.0 ZIPs remain unchanged and retain the old update source. Their updater rejects asset URLs under the renamed repository. Manually download and reinstall 0.5.1 once to migrate to the new update source. Version 0.5.1 shows daily and cumulative conversation tokens in a compact two-line hover tooltip, retaining saved color themes, the green-only warning and installer fixes.
 
 A quota icon inserted into the Codex desktop navigation rail, immediately above the help/profile footer. The icon occupies normal layout space and restores itself after rail rerenders.
 
-- Outer arc: remaining five-hour quota, or weekly quota when the account has no five-hour window. Four dots always show weekly quota.
-- Four bottom dots: weekly quota. One dot turns gray for every fully consumed 25%.
+- Outer arc: remaining five-hour quota, or weekly quota when the account has no five-hour window. The continuous bottom line shows weekly quota.
+- Continuous bottom line: weekly remaining quota. Its colored length follows the remaining percentage; used quota stays gray.
 - Center number: the account's available reset count. Hidden at zero or when unknown; clicking only displays details.
+- Details show horizontal five-hour and weekly remaining bars. Weekly-only accounts show only the weekly bar. Available reset cards include expiration dates and counts; explicitly non-expiring cards say so, missing details remain unavailable, and zero cards hide expiration details.
 - Click the quota icon to open details and choose Classic Black, Sky Blue, Mist Purple, Battery Green, Peach Pink or Warm Amber. Selection is saved locally and synchronized across windows of the same client profile.
-- Only Battery Green turns the outer arc red at 30% remaining or below. Weekly dots and reset numbers stay green; other palettes keep their colors. Weekly-only accounts use weekly quota for the threshold.
+- Only Battery Green turns the outer arc red at 30% remaining or below. Weekly line and reset numbers stay green; other palettes keep their colors. Weekly-only accounts use weekly quota for the threshold.
 - Account data refreshes about once per minute. Unknown values stay unknown; stale data is dimmed.
 
 Adapts MIT code from [jaykinhoo9/codex-usage-badge](https://github.com/jaykinhoo9/codex-usage-badge), pinned to the commit in `third_party/codex-usage-badge/SOURCE.json`. See `THIRD_PARTY_NOTICES.md` for the reused modules and modifications. The upstream updater and Windows installation/startup logic are adapted. Project colors are excluded. The thread identification and read-only lookup inform the new hover-only daily token implementation.
@@ -23,7 +24,7 @@ This is third-party runtime DOM integration, not an official extension. It does 
 
 Requires macOS 14+, Intel or Apple Silicon, a signed-in Codex desktop app with its bundled CLI, and Node.js 24+. The launcher prefers the app's bundled Node runtime.
 
-1. Extract `CodexOrbit-macOS-0.5.0.zip` and open `安装.command` (Install).
+1. Extract `CodexOrbit-macOS-0.5.1.zip` and open `安装.command` (Install).
 2. Save your work, fully quit Codex using Command-Q, then reopen it normally. Wait 5–10 seconds.
 3. Look above the help/profile area in the left navigation rail.
 
@@ -56,14 +57,16 @@ MIT licensed, with upstream attribution retained. Push this source repository to
 
 macOS updates require a newer matching Release with a GitHub SHA-256 asset digest. The archive, every file, platform, version and paths are validated before staging. The installer verifies the new background processes and restores the previous directory and service configuration on failure; successful upgrades retain an old-version backup. Existing Codex sessions are not restarted by updates. SHA-256 verifies integrity, not an independent publisher signature.
 
-Windows 10/11 users can extract `CodexOrbit-Windows-0.5.0.zip` and run `Install.cmd`. The package adapts upstream Store discovery, guarded native relaunch, owned-directory installation, update checks and rollback. Use `Launch.cmd`, `Status.cmd`, `Update.cmd`, and `Uninstall.cmd` for management. Windows uses Node 24 and Windows PowerShell 5.1+. Its native installation and live client placement still require Windows validation; Windows CI has passed script parsing, native helper compilation and archive validation; live Codex compatibility still requires user verification.
+Windows 10/11 users can extract `CodexOrbit-Windows-0.5.1.zip` and run `Install.cmd`. The package adapts upstream Store discovery, guarded native relaunch, owned-directory installation, update checks and rollback. Use `Launch.cmd`, `Status.cmd`, `Update.cmd`, and `Uninstall.cmd` for management. Windows uses Node 24 and Windows PowerShell 5.1+. Its native installation and live client placement still require Windows validation; Windows CI has passed script parsing, native helper compilation and archive validation; live Codex compatibility still requires user verification.
 
 The configured repository is `y2675632584-hub/codex-fruity-quota`. Publish tags `vVERSION-macos` and `vVERSION-windows`, with the corresponding ZIP and `SHA256SUMS.txt`. Platform-tag workflows build, test and publish downloads.
 
-## Hover-only daily conversation tokens
+## Hover-only conversation tokens
 
-Hover a conversation in the sidebar to see its **today-only** recorded tokens; moving away hides the tooltip. No permanent token badges are added. Click the quota icon to toggle this feature under conversation usage; the preference persists locally.
+Hover a conversation in the sidebar to see its **daily and cumulative** recorded tokens; moving away hides the tooltip. No permanent token badges are added. Click the quota icon to toggle this feature under conversation usage; the preference persists locally.
 
 The reader uses local midnight and cumulative `token_count` deltas in Codex session logs. It ignores repeated snapshots and does not add cached/reasoning component counters again. Reads are local and read-only: no model invocation, no additional token use, and no conversation body storage or upload. Only hovered local threads are requested; subsequent reads process appended data.
 
 These are Codex-recorded tokens, not billing or subscription quota. Counts can lag completed responses and include reused context. Incomplete histories, forks, declining counters, unavailable remote/cloud records or files above 128 MiB show unavailable rather than a guessed zero. Stale numbers are hidden after 15 seconds; the daily boundary follows the device timezone. Real client compatibility still requires user verification. Preview `/tokens.html` uses demonstration data.
+
+The tooltip contains exactly two rows, without date or explanatory footnotes. Chinese units 千 / 万 / 亿 start at 1,000 / 10,000 / 100,000,000 respectively, truncated to two decimals with trailing zeros removed. The independent cumulative value comes from local database tokens_used, so a missing daily baseline does not hide a valid cumulative value. Both are recorded metrics, not billing amounts.

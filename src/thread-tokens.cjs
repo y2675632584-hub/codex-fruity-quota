@@ -8,7 +8,7 @@ class ThreadTokenReader {
     const checkedAt=this.now(),day=new Date(checkedAt);day.setHours(0,0,0,0);
     const end=new Date(day);end.setDate(end.getDate()+1);
     const dayKey=[day.getFullYear(),String(day.getMonth()+1).padStart(2,'0'),String(day.getDate()).padStart(2,'0')].join('-');
-    const snapshot={ok:true,scope:'today',dayKey,checkedAt,totals:Object.create(null),states:Object.create(null)};
+    const snapshot={ok:true,scope:'today',dayKey,checkedAt,totals:Object.create(null),cumulative:Object.create(null),states:Object.create(null)};
     const requested=[...new Set(Array.isArray(ids)?ids:[])].filter(id=>typeof id==='string'&&/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(id)).slice(0,100);
     if(!requested.length)return snapshot;
     let db;const fs=require('node:fs'),path=require('node:path');
@@ -18,8 +18,11 @@ class ThreadTokenReader {
       const {DatabaseSync}=require('node:sqlite');db=new DatabaseSync(path.join(this.home,file),{readOnly:true,timeout:200});
       const rows=db.prepare(`SELECT id,rollout_path,tokens_used FROM threads WHERE id IN (${requested.map(()=>'?').join(',')})`).all(...requested);
       db.close();db=null;
-      const roots=['sessions','archived_sessions'].map(n=>path.join(fs.realpathSync(this.home),n));
       for(const id of requested)snapshot.states[id]='unavailable';
+      // The independent cumulative value is Codex's recorded thread counter.
+      // Missing daily baselines must not erase a valid cumulative database value.
+      for(const row of rows)if(Number.isSafeInteger(row.tokens_used)&&row.tokens_used>=0)snapshot.cumulative[row.id]=row.tokens_used;
+      const roots=['sessions','archived_sessions'].map(n=>path.join(fs.realpathSync(this.home),n));
       for(const row of rows) {
         try {
           if(typeof row.rollout_path!=='string')continue;
@@ -107,7 +110,8 @@ async function refreshThreadTokens(injector,reader) {
   const snapshot=await reader.read(requests.flatMap(r=>r.ids));
   await Promise.all(requests.map(async ({session,ids})=>{
     const totals=Object.fromEntries(ids.filter(id=>Object.hasOwn(snapshot.totals,id)).map(id=>[id,snapshot.totals[id]]));
+    const cumulative=Object.fromEntries(ids.filter(id=>Object.hasOwn(snapshot.cumulative??{},id)).map(id=>[id,snapshot.cumulative[id]]));
     const states=Object.fromEntries(ids.filter(id=>Object.hasOwn(snapshot.states??{},id)).map(id=>[id,snapshot.states[id]]));
-    try {await session.evaluate(`window.__codexFruityTokens?.update(${JSON.stringify({...snapshot,totals,states})})`);}catch{}
+    try {await session.evaluate(`window.__codexFruityTokens?.update(${JSON.stringify({...snapshot,totals,cumulative,states})})`);}catch{}
   }));
 }

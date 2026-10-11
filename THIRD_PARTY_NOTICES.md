@@ -36,3 +36,7 @@ No project color modules are injected.
 ## 0.5.0 token references
 
 The pinned MIT `src/thread-token-reader.js` and `src/thread-tokens-ui.js` are preserved unchanged with hashes in SOURCE.json as reviewed references. Their local thread identity and read-only database lookup approaches inform this implementation. They are not bundled as the production reader/UI: `src/thread-tokens.cjs` computes today's numerical log deltas, and `src/injected-thread-tokens.js` shows only a hover tooltip. No additional runtime dependency or model RPC is introduced.
+
+## 0.5.1 cumulative counter
+
+The independent cumulative tokens_used lookup follows the same pinned MIT ThreadTokenReader. The tooltip and Chinese-unit formatting are project adaptations; the unchanged upstream reader remains a reviewed reference.

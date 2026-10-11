@@ -10,7 +10,7 @@
 <body>
   <header class="topbar"><a href="/colors.html">Codex <span>果味额度条</span></a><span class="prototype-tag">配色样板</span></header>
   <main>
-    <div class="intro"><p class="eyebrow">一点颜色，刚刚好。</p><h1>给额度，换个喜欢的颜色。</h1><p>保留熟悉的圆弧和四个点，让它更像你的 Codex。</p></div>
+    <div class="intro"><p class="eyebrow">一点颜色，刚刚好。</p><h1>给额度，换个喜欢的颜色。</h1><p>保留熟悉的圆弧和周额度线，让它更像你的 Codex。</p></div>
     <div class="layout">
       <section class="preview-panel" aria-label="额度图标预览">
         <div class="preview-heading"><span>实时预览</span><div class="appearance" aria-label="预览外观"><button type="button" data-appearance="light" aria-pressed="true">浅色</button><button type="button" data-appearance="dark" aria-pressed="false">深色</button></div></div>
@@ -43,14 +43,14 @@
           <label class="palette-option"><input type="radio" name="palette" value="peach"><span class="color-chip" data-chip="peach"></span><span>蜜桃粉</span><span class="selected-mark" aria-hidden="true">✓</span></label>
           <label class="palette-option"><input type="radio" name="palette" value="amber"><span class="color-chip" data-chip="amber"></span><span>暖琥珀</span><span class="selected-mark" aria-hidden="true">✓</span></label>
         </fieldset>
-        <div class="battery-note"><span class="note-dot" aria-hidden="true"></span><p><strong>电量绿的小提醒</strong><br>剩余 ≤30% 时，只有外圈变红。四个点和重置数字仍保持绿色。</p></div>
+        <div class="battery-note"><span class="note-dot" aria-hidden="true"></span><p><strong>电量绿的小提醒</strong><br>剩余 ≤30% 时，只有外圈变红。周额度线和重置数字仍保持绿色。</p></div>
         <div class="divider"></div>
         <div class="quota-modes" aria-label="账户额度类型"><button type="button" data-mode="standard" aria-pressed="true">5 小时额度</button><button type="button" data-mode="weekly" aria-pressed="false">仅周额度 / Pro</button></div>
         <div class="slider-heading"><label for="remaining">外圈剩余额度</label><output for="remaining" id="remaining-output">75%</output></div>
         <input id="remaining" type="range" min="0" max="100" value="75" step="1" aria-describedby="slider-note">
         <div class="range-labels"><span>0%</span><span>100%</span></div>
         <div class="quick-values" aria-label="快速预览剩余额度"><button type="button" data-remaining="75">75%</button><button type="button" data-remaining="31">31%</button><button type="button" data-remaining="30">30%</button><button type="button" data-remaining="15">15%</button></div>
-        <p class="slider-note" id="slider-note">外圈表示 5 小时额度；四点示意周额度剩余 50%。</p>
+        <p class="slider-note" id="slider-note">外圈表示 5 小时额度；周额度线示意周额度剩余 50%。</p>
         <label class="reset-toggle"><span>显示可用重置次数 <small>示意为 2 次</small></span><input id="show-resets" type="checkbox" checked><span class="toggle-ui" aria-hidden="true"></span></label>
         <button id="reset-colors" class="reset-colors" type="button">恢复经典黑</button>
       </section>

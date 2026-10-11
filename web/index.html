@@ -8,7 +8,7 @@
 <body>
   <header class="topbar"><a class="brand" href="/">果味<span> / codex</span></a><span class="tag">独立组件预览</span><button id="theme" aria-label="切换深浅色主题">深色外观</button></header>
   <main>
-    <section class="intro"><p class="eyebrow">CODEX QUOTA, AT A GLANCE</p><h1>额度，看一眼就知道。</h1><p class="description">一个圆弧，四个点。把余量收进一个小图标。</p></section>
+    <section class="intro"><p class="eyebrow">CODEX QUOTA, AT A GLANCE</p><h1>额度，看一眼就知道。</h1><p class="description">一个圆弧，周额度线。把余量收进一个小图标。</p></section>
     <section class="layout">
       <div class="app-frame" aria-label="侧栏位置示意，不是 Codex 实际界面">
         <aside class="sidebar">
@@ -37,7 +37,7 @@
         <div class="large-icon"><quota-orbit id="hero-orbit"></quota-orbit></div>
         <div class="source"><span id="status-light"></span><span id="source-label">正在读取真实额度</span></div>
         <div class="legend"><div class="legend-symbol arc-symbol"></div><div><h3>外圈 / 5 小时</h3><p>剩余越少，黑色圆弧越短。</p></div></div>
-        <div class="legend"><div class="legend-symbol dots-symbol">••••</div><div><h3>四点 / 本周</h3><p>每用完 25%，一个点变灰。</p></div></div>
+        <div class="legend"><div class="legend-symbol dots-symbol">━</div><div><h3>周额度线 / 本周</h3><p>已用部分变灰。</p></div></div>
         <div class="legend"><div class="legend-symbol number-symbol">2</div><div><h3>中心 / 重置次数</h3><p>显示可用次数，0 次时隐藏。</p></div></div>
         <div class="mode-buttons" role="group" aria-label="数据来源"><button id="live" class="selected">真实额度</button><button id="demo">演示状态</button></div>
         <div id="demo-controls" hidden>

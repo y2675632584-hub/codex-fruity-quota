@@ -12,14 +12,23 @@ function createRows(){
 }
 function update(){
  const totals=mode==='missing'?{}:{[ids[0]]:18486+increment,[ids[1]]:0,[ids[2]]:2400};
+ const cumulative=mode==='missing'?{}:{[ids[0]]:123456789+increment,[ids[1]]:0,[ids[2]]:567800};
  const d=new Date();const dayKey=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
  const states=Object.fromEntries(ids.map(id=>[id,mode==='missing'?'unavailable':'ready']));
- window.__codexFruityTokens.update({ok:mode!=='failed',scope:'today',dayKey,states,totals,checkedAt:Date.now()-(mode==='stale'?31000:0)});
+ window.__codexFruityTokens.update({ok:mode!=='failed',scope:'today',dayKey,states,totals,cumulative,checkedAt:Date.now()-(mode==='stale'?31000:0)});
  document.getElementById('test-report').textContent=mode==='live'?'三个本地对话 · 两个远程／云端对话暂无本地记录':mode==='missing'?'悬停显示暂不可用，不会冒充 0':mode==='failed'?'悬停显示读取失败，不展示旧数字':'悬停显示「待同步」';
 }
 document.getElementById('rail-host').replaceChildren(document.getElementById('rail-template').content.cloneNode(true));
 window.installQuotaOrbit();createRows();window.installThreadTokens();
-window.__codexOrbit.update({fiveHour:{usedPercent:35},weekly:{usedPercent:50},resetCount:2,status:'live',fetchedAt:Date.now()/1000});
+function updateQuota(){
+ const weeklyOnly=document.getElementById('tokens-weekly-only').checked;
+ const resetMode=document.getElementById('tokens-reset-mode').value;
+ const now=Math.floor(Date.now()/1000);
+ const resetExpirations=resetMode==='dated'?[now+7*86400,now+14*86400]:resetMode==='unlimited'?[null,null]:[];
+ window.__codexOrbit.update({fiveHour:weeklyOnly?null:{usedPercent:35,resetsAt:now+5*3600},weekly:{usedPercent:50,resetsAt:now+7*86400},resetCount:resetMode==='zero'?0:2,resetExpirations,status:'live',fetchedAt:now});
+}
+document.getElementById('tokens-reset-mode').onchange=updateQuota;
+document.getElementById('tokens-weekly-only').onchange=updateQuota;updateQuota();
 update();
 // Preview-only controls exercise the same pointer events as a real mouse hover.
 for(const [button,index]of [['tokens-hover',0],['tokens-hover-zero',1],['tokens-hover-remote',3]])document.getElementById(button).onclick=()=>{

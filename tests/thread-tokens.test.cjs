@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {DatabaseSync}=require('node:sqlite');
-const {ThreadTokenReader,refreshThreadTokens,buildBootstrapScript}=require('../build/agent.cjs');
+const {ThreadTokenReader,refreshThreadTokens,buildBootstrapScript,installThreadTokens}=require('../build/agent.cjs');
 const ids=['00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002'];
 const at=(day,hour)=>new Date(2026,9,day,hour).toISOString();
 const meta=(id,day=10,extra={})=>({type:'session_meta',timestamp:at(day,9),payload:{id,timestamp:at(day,9),...extra}});
@@ -20,7 +20,7 @@ function fixture(t){
 test('today sums cumulative deltas across midnight, ignores duplicate snapshots and component counters',async t=>{
  const {reader,put,db}=fixture(t);put(ids[0],[meta(ids[0]),count(10,23,1000),count(11,1,1300),count(11,2,1300),count(11,11,1800)]);
  const s=await reader.read([ids[0],ids[0],"');DROP TABLE threads;--"]);
- assert.equal(s.scope,'today');assert.equal(s.dayKey,'2026-10-11');assert.equal(s.totals[ids[0]],800);assert.equal(s.states[ids[0]],'ready');
+ assert.equal(s.scope,'today');assert.equal(s.dayKey,'2026-10-11');assert.equal(s.totals[ids[0]],800);assert.equal(s.states[ids[0]],'ready');assert.equal(s.cumulative[ids[0]],9000);
  assert.doesNotMatch(JSON.stringify(s),/PRIVATE_TITLE/);assert.equal(db.prepare('SELECT count(*) AS n FROM threads').get().n,1);
 });
 test('new session today starts at zero; no usage today is a genuine zero',async t=>{
@@ -37,6 +37,11 @@ test('missing prior baseline, fork history and declining counters stay unavailab
  for(const events of [[meta(ids[0]),count(11,10,100)], [meta(ids[0],11,{forked_from_id:ids[1]}),count(11,10,100)], [meta(ids[0]),count(10,23,1000),count(11,10,500)]]){
   put(ids[0],events);reader.cache.clear();const s=await reader.read([ids[0]]);assert.equal(s.states[ids[0]],'unavailable');assert.equal(s.totals[ids[0]],undefined);
  }
+});
+test('valid cumulative counters survive unavailable daily baselines, rejecting invalid values',async t=>{
+ const {reader,put,db}=fixture(t);put(ids[0],[meta(ids[0]),count(11,10,500)],123456789);put(ids[1],[meta(ids[1])],-1);
+ let s=await reader.read(ids);assert.equal(s.states[ids[0]],'unavailable');assert.equal(s.cumulative[ids[0]],123456789);assert.equal(s.cumulative[ids[1]],undefined);
+ db.prepare('UPDATE threads SET tokens_used=? WHERE id=?').run(0,ids[1]);s=await reader.read(ids);assert.equal(s.cumulative[ids[1]],0);
 });
 test('incremental append is counted once, and partial lines wait for completion',async t=>{
  const {reader,put,file}=fixture(t);const target=put(ids[0],[meta(ids[0]),count(10,23,1000),count(11,10,1200)]);const before=fs.readFileSync(file);
@@ -78,7 +83,7 @@ test('unknown newer schema never falls back; missing database is never created',
 });
 test('each window receives only hovered thread data, without generation',async()=>{
  const outputs=[[],[]],sessions=ids.map((id,i)=>({evaluate:async source=>{if(source.includes('requestedIds()'))return {result:{value:[id]}};outputs[i].push(source);}}));let requested;
- await refreshThreadTokens({sessions:new Map(sessions.map((s,i)=>[i,s]))},{read:async input=>{requested=input;return{ok:true,scope:'today',dayKey:'2026-10-11',checkedAt:Date.now(),totals:{[ids[0]]:2,[ids[1]]:3},states:{[ids[0]]:'ready',[ids[1]]:'ready'}};}});
+ await refreshThreadTokens({sessions:new Map(sessions.map((s,i)=>[i,s]))},{read:async input=>{requested=input;return{ok:true,scope:'today',dayKey:'2026-10-11',checkedAt:Date.now(),totals:{[ids[0]]:2,[ids[1]]:3},cumulative:{[ids[0]]:100,[ids[1]]:200},states:{[ids[0]]:'ready',[ids[1]]:'ready'}};}});
  assert.deepEqual(requested,ids);assert.ok(outputs[0][0].includes(ids[0]));assert.ok(!outputs[0][0].includes(ids[1]));
  for(const item of outputs.flat())assert.doesNotMatch(item,/turn\/start|thread\/resume|account\/|PRIVATE/);
 });
@@ -87,6 +92,26 @@ test('closed and disabled windows request no records',async()=>{
  await refreshThreadTokens({sessions:new Map([['bad',{evaluate:async()=>{throw Error('closed');}}],['good',good]])},{read:async ids=>{requested=ids;return{ok:true,totals:{},states:{},checkedAt:Date.now()};}});assert.deepEqual(requested,[]);
 });
 test('bootstrap injects hover-only daily UI, no persistent token badge or database code',()=>{
- const s=buildBootstrapScript();assert.match(s,/今日 Token/);assert.match(s,/pointerover/);assert.match(s,/tooltip.hidden=true/);assert.match(s,/悬停对话时显示今日 Token/);
+ const s=buildBootstrapScript();assert.match(s,/今日 Token/);assert.match(s,/pointerover/);assert.match(s,/tooltip.hidden=true/);assert.match(s,/悬停对话时显示 Token/);
  assert.doesNotMatch(s,/DatabaseSync|SELECT id|installProjectColors|Codex 记录累计|thread-token-badge/);
+});
+
+test('hover tooltip has exactly two compact Chinese-unit rows with no date or extra explanation',()=>{
+ const vm=require('node:vm'),listeners=new Map(),elements=[];
+ const root={append:e=>{e.isConnected=true;}};
+ const doc={body:root,head:root,hidden:false,createElement:()=>{const e={style:{},setAttribute(){},remove(){},offsetWidth:150,offsetHeight:50};elements.push(e);return e;},addEventListener:(name,fn)=>listeners.set(name,fn),removeEventListener(){}};
+ const row={isConnected:true,getAttribute:name=>name.endsWith('host-id')?'local':name.endsWith('kind')?'local':'local:'+ids[0],closest(){return this;},getBoundingClientRect:()=>({right:200,top:100})};doc.elementFromPoint=()=>row;
+ const win={addEventListener(){},removeEventListener(){}};
+ vm.runInNewContext('('+installThreadTokens.toString()+')()', {window:win,document:doc,localStorage:{getItem:()=>null,setItem(){}},setInterval:()=>0,clearInterval(){},setTimeout:fn=>{fn();return 1;},clearTimeout(){},innerWidth:1000,innerHeight:800});
+ const d=new Date(),dayKey=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ const api=win.__codexFruityTokens,tip=elements[0];
+ for(const [n,expected]of [[0,'0'],[999,'999'],[1000,'1千'],[9999,'9.99千'],[10000,'1万'],[18486,'1.84万'],[99999999,'9999.99万'],[100000000,'1亿'],[123456789,'1.23亿']]){
+  api.update({ok:true,scope:'today',dayKey,checkedAt:Date.now(),totals:{[ids[0]]:n},cumulative:{[ids[0]]:123456789},states:{[ids[0]]:'ready'}});
+  listeners.get('pointerover')({pointerType:'mouse',clientX:100,clientY:100,buttons:0});
+  assert.equal(tip.textContent,'今日 Token  '+expected+'\n累计 Token  1.23亿');assert.equal(tip.hidden,false);
+ }
+ api.update({ok:true,scope:'today',dayKey,checkedAt:Date.now(),totals:{},cumulative:{[ids[0]]:1000},states:{[ids[0]]:'unavailable'}});
+ assert.equal(tip.textContent,'今日 Token  暂不可用\n累计 Token  1千');
+ api.update({ok:true,scope:'today',dayKey,checkedAt:Date.now()-20000,totals:{[ids[0]]:1},cumulative:{[ids[0]]:1000},states:{[ids[0]]:'ready'}});
+ assert.equal(tip.textContent,'今日 Token  待同步\n累计 Token  待同步');
 });

@@ -1,7 +1,7 @@
 /* Placement is adapted from codex-usage-badge (MIT). See THIRD_PARTY_NOTICES.md. */
 function installQuotaOrbit() {
   const key = '__codexOrbit';
-  const version = 5;
+  const version = 6;
   if (window[key]?.version === version) { window[key].place(); return; }
   window[key]?.destroy?.();
   const badge = document.createElement('div');
@@ -28,8 +28,8 @@ function installQuotaOrbit() {
     <path class="orbit-track" d="M24.544 70.456 A36 36 0 1 1 75.456 70.456" pathLength="100"/>
     <path class="orbit-fill" d="M24.544 70.456 A36 36 0 1 1 75.456 70.456" pathLength="100" visibility="hidden"/>
     <text class="orbit-resets" x="50" y="45" visibility="hidden"></text>
-    <circle cx="32" cy="83" r="3.8"/><circle cx="44" cy="87" r="3.8"/>
-    <circle cx="56" cy="87" r="3.8"/><circle cx="68" cy="83" r="3.8"/>
+    <path class="orbit-week-track" d="M29 82 Q50 94 71 82" pathLength="100"/>
+    <path class="orbit-week-fill" d="M29 82 Q50 94 71 82" pathLength="100" visibility="hidden"/>
   </svg>`;
   const style = document.createElement('style');
   style.id = 'codex-orbit-style';
@@ -47,9 +47,8 @@ function installQuotaOrbit() {
     #codex-orbit-badge .orbit-track{stroke:var(--orbit-track)}
     #codex-orbit-badge .orbit-fill{stroke:currentColor;transition:stroke-dasharray .25s ease}
     #codex-orbit-badge[data-low="true"] .orbit-fill{stroke:#e5484d}
-    #codex-orbit-badge circle{fill:var(--orbit-track)}
-    #codex-orbit-badge circle.orbit-lit{fill:currentColor}
-    #codex-orbit-badge circle.orbit-unknown{fill:none;stroke:var(--orbit-track);stroke-width:1.5}
+    #codex-orbit-badge .orbit-week-track{stroke:var(--orbit-track)}
+    #codex-orbit-badge .orbit-week-fill{stroke:currentColor;transition:stroke-dasharray .25s ease}
     #codex-orbit-badge text{fill:currentColor;font:600 29px -apple-system,BlinkMacSystemFont,sans-serif;
       text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums}
     #codex-orbit-badge[data-state="unavailable"] .orbit-track{stroke-dasharray:3 6}
@@ -64,7 +63,13 @@ function installQuotaOrbit() {
     #codex-orbit-details .orbit-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;font-size:14px;font-weight:600}
     #codex-orbit-details .orbit-close{width:28px;height:28px;padding:0;border:0;border-radius:7px;background:transparent;color:inherit;cursor:pointer;font:20px/1 sans-serif}
     #codex-orbit-details .orbit-close:hover{background:#8882}
-    #codex-orbit-details .orbit-summary{white-space:pre-line}
+    #codex-orbit-details .orbit-quota{margin-bottom:18px}
+    #codex-orbit-details .orbit-quota-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;font-variant-numeric:tabular-nums}
+    #codex-orbit-details .orbit-quota-track{height:7px;border-radius:4px;background:#8883;overflow:hidden}
+    #codex-orbit-details .orbit-quota-fill{display:block;height:100%;border-radius:inherit;background:var(--orbit-details-light,currentColor);transition:width .25s ease}
+    #codex-orbit-details .orbit-quota-reset{font-size:11px;opacity:.65;margin-top:6px}
+    #codex-orbit-details .orbit-reset-summary{white-space:pre-line}
+    #codex-orbit-details .orbit-reset-expirations{white-space:pre-line;margin-top:10px;font-size:11px}
     #codex-orbit-details fieldset{border:0;border-top:1px solid #8883;margin:14px 0 0;padding:12px 0 0;min-width:0}
     #codex-orbit-details legend{float:left;width:100%;padding:0;margin:0 0 8px;font-weight:600}
     #codex-orbit-details .orbit-colors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;clear:both}
@@ -79,10 +84,12 @@ function installQuotaOrbit() {
     #codex-orbit-details .orbit-color-note,#codex-orbit-details .orbit-save-status{font-size:11px;line-height:1.6;opacity:.75;margin:10px 0 0}
     #codex-orbit-details .orbit-save-status:empty{display:none}
     html.dark #codex-orbit-details,html[data-theme="dark"] #codex-orbit-details{color:var(--color-text-primary,#eee);background:var(--color-surface-elevated-secondary,#252525)}
+    html.dark #codex-orbit-details .orbit-quota-fill,html[data-theme="dark"] #codex-orbit-details .orbit-quota-fill{background:var(--orbit-details-dark,currentColor)}
     html.dark #codex-orbit-details .orbit-swatch,html[data-theme="dark"] #codex-orbit-details .orbit-swatch{background:var(--swatch-dark)}
     @media(prefers-color-scheme:dark){html:not(.light):not([data-theme="light"]) #codex-orbit-details{color:var(--color-text-primary,#eee);background:var(--color-surface-elevated-secondary,#252525)}}
     @media(prefers-color-scheme:dark){html:not(.light):not([data-theme="light"]) #codex-orbit-details .orbit-swatch{background:var(--swatch-dark)}}
-    @media(prefers-reduced-motion:reduce){#codex-orbit-badge .orbit-fill{transition:none}}
+    @media(prefers-color-scheme:dark){html:not(.light):not([data-theme="light"]) #codex-orbit-details .orbit-quota-fill{background:var(--orbit-details-dark,currentColor)}}
+    @media(prefers-reduced-motion:reduce){#codex-orbit-badge .orbit-fill,#codex-orbit-badge .orbit-week-fill,#codex-orbit-details .orbit-quota-fill{transition:none}}
   `;
   const details = document.createElement('div');
   details.id = 'codex-orbit-details';
@@ -90,9 +97,13 @@ function installQuotaOrbit() {
   details.setAttribute('role', 'dialog');
   details.setAttribute('aria-label', 'Codex 额度与配色');
   details.innerHTML = `<div class="orbit-heading"><span>Codex 剩余额度</span><button type="button" class="orbit-close" aria-label="关闭额度详情">×</button></div>
-    <div class="orbit-summary"></div><fieldset><legend>图标配色</legend><div class="orbit-colors"></div></fieldset>
-    <p class="orbit-color-note">仅电量绿在剩余 ≤30% 时外圈变红，圆点和数字保持绿色。</p>
-    <fieldset><legend>对话用量</legend><label><input type="checkbox" class="orbit-token-toggle"> 悬停对话时显示今日 Token</label><p class="orbit-color-note">按本机日期统计今日记录，不消耗 Token。无完整本地记录时显示暂不可用。</p></fieldset>
+    <div class="orbit-summary">
+      <div class="orbit-quota orbit-hour"><div class="orbit-quota-header"><span>5 小时</span><span class="orbit-quota-percent"></span></div><div class="orbit-quota-track" role="progressbar" aria-label="5 小时剩余额度" aria-valuemin="0" aria-valuemax="100"><span class="orbit-quota-fill"></span></div><div class="orbit-quota-reset"></div></div>
+      <div class="orbit-quota orbit-week"><div class="orbit-quota-header"><span>本周</span><span class="orbit-quota-percent"></span></div><div class="orbit-quota-track" role="progressbar" aria-label="本周剩余额度" aria-valuemin="0" aria-valuemax="100"><span class="orbit-quota-fill"></span></div><div class="orbit-quota-reset"></div></div>
+      <div class="orbit-reset-summary"></div><div class="orbit-reset-expirations"></div>
+    </div><fieldset><legend>图标配色</legend><div class="orbit-colors"></div></fieldset>
+    <p class="orbit-color-note">仅电量绿在剩余 ≤30% 时外圈变红，周额度线和数字保持绿色。</p>
+    <fieldset><legend>对话用量</legend><label><input type="checkbox" class="orbit-token-toggle"> 悬停对话时显示 Token</label><p class="orbit-color-note">显示今日与累计用量，不消耗 Token。</p></fieldset>
     <p class="orbit-save-status" role="status"></p>`;
   const tokenToggle=details.querySelector('.orbit-token-toggle');
   tokenToggle.addEventListener('change',()=>window.__codexFruityTokens?.setEnabled(tokenToggle.checked));
@@ -130,6 +141,23 @@ function installQuotaOrbit() {
     if (!Number.isFinite(date.getTime())) return '重置时间暂不可用';
     return `重置 ${date.toLocaleString(undefined, { month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit' })}`;
   }
+  function creditExpiryText(count) {
+    if (!(count > 0)) return '';
+    const groups = new Map();
+    const expirations = Array.isArray(value.resetExpirations) ? value.resetExpirations : [];
+    let known = 0;
+    for (const expiry of expirations.slice(0, Math.min(count, 100))) {
+      if (expiry !== null && (!Number.isSafeInteger(expiry) || expiry <= 0 || expiry > 8640000000000)) continue;
+      groups.set(expiry, (groups.get(expiry) ?? 0) + 1); known++;
+    }
+    const lines = [...groups].sort(([a],[b]) => (a ?? Infinity) - (b ?? Infinity)).map(([expiry,number]) => {
+      const label = expiry === null ? '无到期限制' : new Date(expiry * 1000).toLocaleString(undefined,
+        {year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      return `${label}（${number} 张）`;
+    });
+    if (known < count) lines.push(`到期时间暂不可用（${count-known} 张）`);
+    return `重置卡到期\n${lines.join('\n')}`;
+  }
   function positionDetails() {
     const rect = badge.getBoundingClientRect();
     details.style.left = `${Math.max(8, Math.min(rect.right + 10, innerWidth - details.offsetWidth - 8))}px`;
@@ -159,8 +187,8 @@ function installQuotaOrbit() {
     badge.dataset.low = String(palette === 'battery' && ring !== null && ring <= 30);
     for(const appearance of ['light','dark']) {
       const property=`--orbit-palette-${appearance}`;
-      if(palette === 'classic')badge.style.removeProperty(property);
-      else badge.style.setProperty(property,palettes[palette][appearance]);
+      if(palette === 'classic'){badge.style.removeProperty(property);details.style.removeProperty(`--orbit-details-${appearance}`);}
+      else {badge.style.setProperty(property,palettes[palette][appearance]);details.style.setProperty(`--orbit-details-${appearance}`,palettes[palette][appearance]);}
     }
     details.querySelectorAll('input[type=radio]').forEach(input=>{input.checked=input.value===palette;});
     const fill = badge.querySelector('.orbit-fill');
@@ -170,12 +198,28 @@ function installQuotaOrbit() {
     text.textContent = count > 0 ? String(count) : '';
     text.setAttribute('visibility', count > 0 ? 'visible' : 'hidden');
     text.style.fontSize = count > 99 ? '21px' : '';
-    const points = week === null ? null : Math.ceil(week / 25);
-    badge.querySelectorAll('circle').forEach((dot, index) => dot.setAttribute('class', points === null ? 'orbit-unknown' : index < points ? 'orbit-lit' : ''));
+    const weeklyFill=badge.querySelector('.orbit-week-fill');
+    weeklyFill.setAttribute('visibility',week!==null&&week>0?'visible':'hidden');
+    weeklyFill.setAttribute('stroke-dasharray',`${week??0} 100`);
+    const weeklyTrack=badge.querySelector('.orbit-week-track');
+    if(week===null)weeklyTrack.setAttribute('stroke-dasharray','2 5');else weeklyTrack.removeAttribute('stroke-dasharray');
     const resetLabel = count === null ? '暂不可用' : `${count} 次`;
     const description = `${ringLabel}剩余 ${percent(ring)}，周剩余 ${percent(week)}，可用重置 ${resetLabel}${state === 'stale' ? '，数据未同步' : ''}`;
     badge.setAttribute('aria-label', description);
-    summary.textContent = `${ringLabel}    ${percent(ring)}\n${resetTime(ringWindow === 'weekly' ? value.weekly : value.fiveHour)}\n\n本周       ${percent(week)}\n${resetTime(value.weekly)}\n\n可用重置 ${resetLabel}\n${state === 'stale' ? '同步失败 · 上次成功数据' : state === 'unavailable' ? '等待账号额度数据' : '本机读取 · 点击不消耗重置次数'}`;
+    summary.querySelector('.orbit-hour').hidden=ringWindow==='weekly'&&!value.fiveHour;
+    for(const [selector,amount,windowValue] of [['.orbit-hour',five,value.fiveHour],['.orbit-week',week,value.weekly]]){
+      const block=summary.querySelector(selector),track=block.querySelector('.orbit-quota-track');
+      block.querySelector('.orbit-quota-percent').textContent=percent(amount);
+      block.querySelector('.orbit-quota-fill').style.width=`${amount??0}%`;
+      block.querySelector('.orbit-quota-reset').textContent=resetTime(windowValue);
+      if(amount===null)track.removeAttribute('aria-valuenow');else track.setAttribute('aria-valuenow',String(amount));
+      track.setAttribute('aria-valuetext',percent(amount));
+      track.style.opacity=state==='stale'?'.45':'1';
+    }
+    summary.querySelector('.orbit-reset-summary').textContent=`可用重置 ${resetLabel}\n${state === 'stale' ? '同步失败 · 上次成功数据' : state === 'unavailable' ? '等待账号额度数据' : '本机读取 · 点击不消耗重置次数'}`;
+    const expirationBlock=summary.querySelector('.orbit-reset-expirations');
+    expirationBlock.textContent=creditExpiryText(count);
+    expirationBlock.hidden=!(count>0);
     if (!details.hidden) positionDetails();
   }
   function place() {

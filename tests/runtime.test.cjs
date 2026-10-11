@@ -33,6 +33,37 @@ test('runtime handles reordered windows and missing/invalid fields', () => {
   const keyed=payload();keyed.rateLimits=keyed.rateLimitsByLimitId.codex;keyed.rateLimitsByLimitId={other:keyed.rateLimits};
   assert.equal(runtime.sanitizeOrbitUsage(keyed).status,'unavailable');
 });
+test('reset expiration details retain only available Codex cards and timestamps', () => {
+  const response=payload();response.rateLimitResetCredits.availableCount=10;
+  response.rateLimitResetCredits.credits=[
+    {id:'PRIVATE_ID',status:'available',resetType:'codexRateLimits',expiresAt:2000000000},
+    {status:'available',resetType:'codexRateLimits',expiresAt:null},
+    {status:'redeemed',resetType:'codexRateLimits',expiresAt:2000000001},
+    {status:'available',resetType:'unknown',expiresAt:2000000002},
+    ...[undefined,-1,true,'2000000000',Infinity,8640000000001].map(expiresAt=>({status:'available',resetType:'codexRateLimits',expiresAt}))];
+  const result=runtime.sanitizeOrbitUsage(response);
+  assert.deepEqual(result.resetExpirations,[2000000000,null]);
+  assert.ok(!JSON.stringify(result).includes('PRIVATE'));
+  response.rateLimitResetCredits.availableCount=1;
+  assert.deepEqual(runtime.sanitizeOrbitUsage(response).resetExpirations,[2000000000]);
+  response.rateLimitResetCredits.availableCount=0;
+  assert.deepEqual(runtime.sanitizeOrbitUsage(response).resetExpirations,[]);
+  response.rateLimitResetCredits={availableCount:2,credits:null};
+  assert.deepEqual(runtime.sanitizeOrbitUsage(response).resetExpirations,[]);
+});
+test('reset card UI groups dates and distinguishes unlimited, missing and zero cards', () => {
+  const vm=require('node:vm');
+  const source=fs.readFileSync(path.join(__dirname,'../src/injected-orbit.js'),'utf8');
+  const functionSource=source.slice(source.indexOf('  function creditExpiryText('),source.indexOf('  function positionDetails('));
+  const context={value:{resetExpirations:[2000000000,2000000000,null]}};
+  vm.createContext(context);vm.runInContext(functionSource,context);
+  assert.match(context.creditExpiryText(4),/（2 张）/);
+  assert.match(context.creditExpiryText(4),/无到期限制（1 张）/);
+  assert.match(context.creditExpiryText(4),/到期时间暂不可用（1 张）/);
+  assert.equal(context.creditExpiryText(0),'');
+  context.value={resetExpirations:[]};
+  assert.equal(context.creditExpiryText(2),'重置卡到期\n到期时间暂不可用（2 张）');
+});
 test('upstream notification merging clears previous account data', () => {
   const result=runtime.mergeRateLimitsResponse(payload(),{accountId:'NEW_ACCOUNT',rateLimitsByLimitId:{codex:{limitId:'codex',primary:null,secondary:null}}});
   assert.equal(runtime.sanitizeOrbitUsage(result).resetCount,null);

@@ -58,6 +58,24 @@ class UsageTests(unittest.TestCase):
         for value in [None, -1, True, 2.4]:
             self.assertIsNone(normalize(payload(resets=value))["resetCount"])
 
+    def test_reset_expiry_whitelist(self):
+        data = payload(resets=10)
+        data["rateLimitResetCredits"]["credits"] = [
+            {"id": "PRIVATE_ID", "status": "available", "resetType": "codexRateLimits", "expiresAt": 2000000000},
+            {"status": "available", "resetType": "codexRateLimits", "expiresAt": None},
+            {"status": "redeemed", "resetType": "codexRateLimits", "expiresAt": 2000000001},
+            {"status": "available", "resetType": "unknown", "expiresAt": 2000000002},
+            {"status": "available", "resetType": "codexRateLimits"},
+        ] + [{"status": "available", "resetType": "codexRateLimits", "expiresAt": x}
+             for x in [-1, True, "2000000000", float("inf"), 8640000000001]]
+        result = normalize(data)
+        self.assertEqual(result["resetExpirations"], [2000000000, None])
+        self.assertNotIn("PRIVATE", json.dumps(result))
+        data["rateLimitResetCredits"]["availableCount"] = 1
+        self.assertEqual(normalize(data)["resetExpirations"], [2000000000])
+        data["rateLimitResetCredits"]["availableCount"] = 0
+        self.assertEqual(normalize(data)["resetExpirations"], [])
+
     def test_cache_failure_preserves_old_timestamp_and_marks_stale(self):
         calls = []
         def fetch():

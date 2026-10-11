@@ -16,9 +16,15 @@ function sanitizeOrbitUsage(response, now = Date.now() / 1000) {
       resetsAt:Number.isFinite(item.resetsAt) && item.resetsAt > 0 ? item.resetsAt : null };
   };
   const count = object.rateLimitResetCredits?.availableCount;
+  const credits = object.rateLimitResetCredits?.credits;
+  const resetExpirations = Number.isInteger(count) && count > 0 && Array.isArray(credits)
+    ? credits.filter(item => item?.status === 'available' && item?.resetType === 'codexRateLimits'
+      && (item.expiresAt === null || (Number.isSafeInteger(item.expiresAt) && item.expiresAt > 0 && item.expiresAt <= 8640000000000)))
+      .slice(0, Math.min(count, 100)).map(item => item.expiresAt) : [];
   const value = { fiveHour:pick(300), weekly:pick(10080),
     ringWindow:windows.some(w => w?.windowDurationMins === 300) ? 'fiveHour' : pick(10080) ? 'weekly' : null,
     resetCount:Number.isInteger(count) && count >= 0 ? count : null,
+    resetExpirations,
     fetchedAt:now, source:'codex-app-server', status:'live' };
   if (value.fiveHour === null && value.weekly === null) value.status = 'unavailable';
   return value;

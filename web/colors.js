@@ -45,7 +45,7 @@ function render() {
   $('ring-state').dataset.warning=String(warning);
   $('ring-state').textContent=warning?(remaining===0?'额度已用尽 · 外圈仅显示灰色底环':'低额度提醒 · 外圈已变红'):
     selection==='battery'?'剩余 30% 及以下，外圈自动变红':'保持所选配色';
-  $('slider-note').textContent=quotaMode==='weekly'?'没有 5 小时额度时，外圈和四点都表示周额度。':'外圈表示 5 小时额度；四点示意周额度剩余 50%。';
+  $('slider-note').textContent=quotaMode==='weekly'?'没有 5 小时额度时，外圈和周额度线都表示周额度。':'外圈表示 5 小时额度；周额度线示意周额度剩余 50%。';
   document.querySelectorAll('[data-remaining]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.remaining)===remaining)));
   document.querySelectorAll('[data-appearance]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.appearance===appearance)));
   document.querySelectorAll('[data-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===quotaMode)));
