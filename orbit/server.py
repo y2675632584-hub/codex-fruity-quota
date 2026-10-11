@@ -19,7 +19,9 @@ FILES = {"/": ("rail.html", "text/html"),
          "/rail-preview.js": ("rail-preview.js", "text/javascript"),
          "/colors.html": ("colors.html", "text/html"),
          "/colors.css": ("colors.css", "text/css"),
-         "/colors.js": ("colors.js", "text/javascript")}
+         "/colors.js": ("colors.js", "text/javascript"),
+         "/tokens.html": ("tokens.html", "text/html"),
+         "/tokens-preview.js": ("tokens-preview.js", "text/javascript")}
 
 
 def create_server(port=8765, cache=None):
@@ -43,8 +45,8 @@ def create_server(port=8765, cache=None):
             if path == "/api/usage":
                 self.respond(200, json.dumps(usage.get(), ensure_ascii=False).encode(), "application/json")
                 return
-            if path == "/injected-orbit.js":
-                self.respond(200, (WEB.parent / "src/injected-orbit.js").read_bytes(), "text/javascript")
+            if path in ("/injected-orbit.js", "/injected-thread-tokens.js"):
+                self.respond(200, (WEB.parent / "src" / path[1:]).read_bytes(), "text/javascript")
                 return
             item = FILES.get(path)
             if item is None:

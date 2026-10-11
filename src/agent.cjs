@@ -1,8 +1,9 @@
 async function runOrbit({ port = 39222, appPath, codexBin, scanMs = 5000, pollMs = 60000,
-  rendererInjector, receiptFile = require('node:path').join(__dirname,'runtime-state.json') } = {}) {
+  rendererInjector, threadTokenReader, receiptFile = require('node:path').join(__dirname,'runtime-state.json') } = {}) {
   if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('无效的本机端口');
   const executable = resolveCodexBin(codexBin, appPath);
   const injector = rendererInjector ?? new RendererInjector({ port });
+  const tokenReader=threadTokenReader ?? new ThreadTokenReader();
   const receiptFs = require('node:fs');
   const startedAt = Date.now();
   function writeState(state) {
@@ -69,9 +70,15 @@ async function runOrbit({ port = 39222, appPath, codexBin, scanMs = 5000, pollMs
   const scheduledTick = () => tick().catch(() => {
     console.error('额度后台状态记录失败，请运行诊断。');stop();process.exitCode=1;
   });
+  let readingTokens=false;
+  const tokenTimer=setInterval(async()=>{
+    if(stopped||readingTokens||!injector.sessions.size)return;
+    readingTokens=true;
+    try {await refreshThreadTokens(injector,tokenReader);}catch{}finally{readingTokens=false;}
+  },1000);
   const timer = setInterval(scheduledTick, scanMs);
   const stop = () => {
-    stopped = true; clearInterval(timer); const old = client; client = null; old?.stop(); injector.stop();
+    stopped = true; clearInterval(timer); clearInterval(tokenTimer); const old = client; client = null; old?.stop(); injector.stop();
     process.removeListener('SIGTERM',onTerminate);process.removeListener('SIGINT',onTerminate);
   };
   const onTerminate = () => { stop(); process.exit(0); };
@@ -84,7 +91,7 @@ async function runOrbit({ port = 39222, appPath, codexBin, scanMs = 5000, pollMs
   return { stop, injector };
 }
 module.exports = { installQuotaOrbit, sanitizeOrbitUsage, isCodexLimit, runOrbit,
-  AppServerClient, RendererInjector, CdpSession, isMainWindow, buildBootstrapScript, mergeRateLimitsResponse, resolveCodexBin };
+  ThreadTokenReader, refreshThreadTokens, installThreadTokens, AppServerClient, RendererInjector, CdpSession, isMainWindow, buildBootstrapScript, mergeRateLimitsResponse, resolveCodexBin };
 if (require.main === module) {
   if (process.argv.includes('--once')) {
     const options = process.platform === 'win32' ? {app:process.env.CODEX_ORBIT_APP,codexBin:process.env.CODEX_ORBIT_BIN,port:Number(process.env.CODEX_ORBIT_PORT||39222)} : JSON.parse(require('node:fs').readFileSync(process.env.CODEX_ORBIT_CONFIG || require('node:path').join(__dirname,'settings.json'),'utf8'));

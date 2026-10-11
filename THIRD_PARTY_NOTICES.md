@@ -19,7 +19,7 @@ Reused parts:
 
 The vendored files are kept unchanged. `scripts/build.py` checks their recorded hashes and applies these reviewed adaptations to the generated runtime:
 
-1. Inject only Orbit's quota component; omit project colors, file sizes, and chat token features.
+1. Inject Orbit's quota component and its own hover-only daily token UI; omit project colors and file sizes.
 2. Rename the renderer namespace from `__codexUsageBadge` to `__codexOrbit`.
 3. Identify the App Server client as `codex_orbit` / `Codex 果味额度条`.
 
@@ -31,4 +31,8 @@ The original source screenshot, upstream promotional image, user reference scree
 
 The same pinned MIT commit supplies updater/core.cjs, windows/manage-windows.ps1, windows/update.cjs, windows/update-windows.ps1, windows/bridge.cjs and the startup Windows controller/PowerShell/C# bridge. scripts/adapt.py preserves the originals under third_party and generates project-specific names, repository metadata, file allowlists and checksums. macOS updater network/archive validation is reused; its installer is this project’s transaction code. Windows ownership checks, Store discovery, native startup guards and rollback are retained, while quota rendering uses Orbit. License files are included in both platform distributions.
 
-No project color or token modules are injected.
+No project color modules are injected.
+
+## 0.5.0 token references
+
+The pinned MIT `src/thread-token-reader.js` and `src/thread-tokens-ui.js` are preserved unchanged with hashes in SOURCE.json as reviewed references. Their local thread identity and read-only database lookup approaches inform this implementation. They are not bundled as the production reader/UI: `src/thread-tokens.cjs` computes today's numerical log deltas, and `src/injected-thread-tokens.js` shows only a hover tooltip. No additional runtime dependency or model RPC is introduced.

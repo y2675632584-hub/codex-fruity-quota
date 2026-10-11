@@ -1,7 +1,7 @@
 /* Placement is adapted from codex-usage-badge (MIT). See THIRD_PARTY_NOTICES.md. */
 function installQuotaOrbit() {
   const key = '__codexOrbit';
-  const version = 4;
+  const version = 5;
   if (window[key]?.version === version) { window[key].place(); return; }
   window[key]?.destroy?.();
   const badge = document.createElement('div');
@@ -92,7 +92,10 @@ function installQuotaOrbit() {
   details.innerHTML = `<div class="orbit-heading"><span>Codex 剩余额度</span><button type="button" class="orbit-close" aria-label="关闭额度详情">×</button></div>
     <div class="orbit-summary"></div><fieldset><legend>图标配色</legend><div class="orbit-colors"></div></fieldset>
     <p class="orbit-color-note">仅电量绿在剩余 ≤30% 时外圈变红，圆点和数字保持绿色。</p>
+    <fieldset><legend>对话用量</legend><label><input type="checkbox" class="orbit-token-toggle"> 悬停对话时显示今日 Token</label><p class="orbit-color-note">按本机日期统计今日记录，不消耗 Token。无完整本地记录时显示暂不可用。</p></fieldset>
     <p class="orbit-save-status" role="status"></p>`;
+  const tokenToggle=details.querySelector('.orbit-token-toggle');
+  tokenToggle.addEventListener('change',()=>window.__codexFruityTokens?.setEnabled(tokenToggle.checked));
   const summary = details.querySelector('.orbit-summary');
   const saveStatus = details.querySelector('.orbit-save-status');
   for(const [id,entry] of Object.entries(palettes)) {
@@ -141,6 +144,7 @@ function installQuotaOrbit() {
     if (disposed || !visible(badge) || document.hidden) return;
     details.hidden = false;
     badge.setAttribute('aria-expanded', 'true');
+    tokenToggle.checked=window.__codexFruityTokens?.isEnabled() ?? true;
     positionDetails();
   }
   function render() {

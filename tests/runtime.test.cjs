@@ -38,7 +38,7 @@ test('upstream notification merging clears previous account data', () => {
   assert.equal(runtime.sanitizeOrbitUsage(result).resetCount,null);
   assert.equal(runtime.sanitizeOrbitUsage(result).fiveHour,null);
 });
-test('bootstrap injects only the orbit and uses DOM layout placement', () => {
+test('bootstrap injects quota and scoped tokens, preserves DOM placement', () => {
   const source=runtime.buildBootstrapScript();
   assert.ok(source.includes('rail.insertBefore(badge, footer)'));
   assert.ok(source.includes('position:relative'));

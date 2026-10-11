@@ -24,12 +24,13 @@ def build(native=False):
     cdp = (VENDOR / 'src/cdp.js').read_text(encoding='utf-8')
     cdp = replace_once(cdp,
         "return [installUsageBadge,installProjectColors,installProjectSizes,installThreadTokens].map(fn=>`(${fn.toString()})()`).join(';\\n');",
-        "return `(${installQuotaOrbit.toString()})()`;")
+        "return [installQuotaOrbit,installThreadTokens].map(fn=>`(${fn.toString()})()`).join(';\\n');")
     cdp = cdp.replace('__codexUsageBadge', '__codexOrbit')
     app_server = (VENDOR / 'src/app-server.js').read_text(encoding='utf-8').replace("name:'codex_usage_badge',title:'Codex Usage Badge'", "name:'codex_orbit',title:'Codex 果味额度条'")
     parts = [f"/* Codex 果味额度条 {version}; includes MIT-licensed codex-usage-badge code. */\n'use strict';\nconst AGENT_VERSION={json.dumps(version)};",
              (VENDOR / 'src/rate-limits.js').read_text(encoding='utf-8'), (VENDOR / 'src/resolve.js').read_text(encoding='utf-8'),
-             app_server, cdp, (ROOT / 'src/orbit-values.cjs').read_text(encoding='utf-8'),
+             app_server, cdp, (ROOT / 'src/thread-tokens.cjs').read_text(encoding='utf-8'),
+             (ROOT / 'src/injected-thread-tokens.js').read_text(encoding='utf-8'), (ROOT / 'src/orbit-values.cjs').read_text(encoding='utf-8'),
              (ROOT / 'src/injected-orbit.js').read_text(encoding='utf-8'), (ROOT / 'src/agent.cjs').read_text(encoding='utf-8')]
     output = ROOT / 'build'
     (output / 'startup').mkdir(parents=True, exist_ok=True)

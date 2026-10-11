@@ -20,6 +20,8 @@
     "startup/controller.cjs": "be8bf6331e1c90286ed72e8d8be92e1d7286b7e9e77ff01396ef4f0a3a5d7c6d",
     "startup/windows.cjs": "ee7e40866af6b6d58d1db3f61712e1e446458469a7fd836488c21e8b6bf7e094",
     "startup/windows-bridge.ps1": "126f7a8b0a64f02b6f125381876d73d41194a9db50e6db62fa8bd9472cfdc441",
-    "startup/windows-native.cs": "4fc20ea89a917cb682c212836cfee78f55456719bf57f35fccd65f87032e5f06"
+    "startup/windows-native.cs": "4fc20ea89a917cb682c212836cfee78f55456719bf57f35fccd65f87032e5f06",
+    "src/thread-token-reader.js": "d162525025b21ca53c26f7b7344a0f959ee9905b09d0ab464d7de75d759cdc25",
+    "src/thread-tokens-ui.js": "d943511b37be6f7a97b1c0ced2758ed46a2560f57b0da13402dbf0be30e41ebc"
   }
 }

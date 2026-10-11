@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Codex 果味额度条 · 对话 Token 样板</title>
+  <link rel="stylesheet" href="/rail.css">
+  <script src="/injected-orbit.js" defer></script>
+  <script src="/injected-thread-tokens.js" defer></script>
+  <script type="module" src="/tokens-preview.js"></script>
+<style>.projects{width:248px;flex-basis:248px}.token-row{display:flex;align-items:center;gap:8px;padding:9px 6px;margin:5px 0;border-radius:6px;cursor:pointer}.token-row:first-child{background:#8882}.token-title-slot{flex:1;min-width:0;font-size:11px}.token-row button{background:none;border:0;padding:0 2px;color:inherit;font-size:12px}@media(max-width:650px){.projects{width:195px;flex-basis:195px}.chat-area{display:none}}</style></head>
+<body>
+  <header><a href="/rail.html">果味 / codex</a><span>对话 Token 样板 · 模拟导航栏</span><button id="theme">浅色外观</button></header>
+  <main>
+    <p class="eyebrow">REUSED PLACEMENT · YOUR ICON</p>
+    <h1>每个对话，用了多少。</h1><p class="subtitle">移到某条对话上，才会显示当天 Token。此页使用演示数据。</p>
+    <section class="workspace">
+      <div class="client" aria-label="模拟客户端，仅用于验证组件定位">
+        <div id="rail-host"></div>
+        <aside class="projects"><h2>Codex</h2><p>＋ 新建聊天</p><p class="muted">项目</p><div class="project">▱ 果味额度条</div><div id="token-rows"></div></aside>
+        <section class="chat-area"><div class="caption">接入测试页 · 非真实 Codex 界面</div><div class="center"><div class="mark"></div><h3>用量读数，不额外消耗。</h3><p>悬停对话，查看今天的 Token 记录。</p><p class="muted">按本机日期统计，不包含前几天的用量。</p></div><div class="composer">提出任务 <span>↑</span></div></section>
+      </div>
+      <aside class="controls">
+        <p class="control-title">演示数据 · 非真实账户</p>
+        <button class="test-action" id="tokens-hover">模拟悬停「界面设计」</button>
+        <button class="test-action" id="tokens-hover-zero">模拟悬停零用量对话</button>
+        <button class="test-action" id="tokens-hover-remote">模拟悬停远程对话</button>
+        <button class="test-action" id="tokens-leave">模拟移出对话</button>
+        <button class="test-action" id="tokens-update">更新演示用量</button>
+        <button class="test-action" id="tokens-missing">模拟记录缺失</button>
+        <button class="test-action" id="tokens-fail">模拟读取失败</button>
+        <button class="test-action" id="tokens-stale">模拟数据过期</button>
+        <button class="test-action" id="tokens-rerender">模拟对话列表重绘</button>
+        <button class="test-action" id="tokens-restore">恢复演示数据</button>
+        <div id="test-report" role="status">等待读取</div>
+        <p class="note">点击左下角额度图标，可开关「对话 Token」。仅支持有本地记录的 Codex 对话；远程／云端没有完整本地记录时显示暂不可用。</p>
+      </aside>
+    </section>
+    <footer>Codex 果味额度条 0.5.0 · MIT · 复用 codex-usage-badge 的定位与连接方案</footer>
+  </main>
+  <template id="rail-template"><nav data-app-navigation-rail aria-label="模拟导航栏"><div class="top-icons"><span>⌂</span><span>◷</span><span>▥</span><span>▧</span><span>⚙</span><span>···</span></div><div class="rail-spacer"></div><div class="account-footer"><span class="help">?</span><div class="avatar">U</div></div></nav></template>
+</body>
+</html>
