@@ -4,7 +4,7 @@
 
 ![Codex Fruity Quota features](docs/images/features.png)
 
-Public display name: **Codex 果味额度条**. The repository is `codex-fruity-quota`. Existing internal directories, service names and archive names retain `CodexOrbit` for installation compatibility. The published 0.3.0 ZIPs remain unchanged and retain the old update source. Their updater rejects asset URLs under the renamed repository. Manually download and reinstall 0.5.2 once to migrate to the new update source. Version 0.5.2 shows daily and cumulative conversation tokens in a compact two-line hover tooltip, retaining saved color themes, the green-only warning and installer fixes.
+Public display name: **Codex 果味额度条**. The repository is `codex-fruity-quota`. Existing internal directories, service names and archive names retain `CodexOrbit` for installation compatibility. The published 0.3.0 ZIPs remain unchanged and retain the old update source. Their updater rejects asset URLs under the renamed repository. Manually download and reinstall 0.5.3 once to migrate to the new update source. Version 0.5.3 shows daily and cumulative conversation tokens in a compact two-line hover tooltip, retaining saved color themes, the green-only warning and installer fixes.
 
 A quota icon inserted into the Codex desktop navigation rail, immediately above the help/profile footer. The icon occupies normal layout space and restores itself after rail rerenders.
 
@@ -24,7 +24,7 @@ This is third-party runtime DOM integration, not an official extension. It does 
 
 Requires macOS 14+, Intel or Apple Silicon, a signed-in Codex desktop app with its bundled CLI, and Node.js 24+. The launcher prefers the app's bundled Node runtime.
 
-1. Extract `CodexOrbit-macOS-0.5.2.zip` and open `安装.command` (Install).
+1. Extract `CodexOrbit-macOS-0.5.3.zip` and open `安装.command` (Install).
 2. Save your work, fully quit Codex using Command-Q, then reopen it normally. Wait 5–10 seconds.
 3. Look above the help/profile area in the left navigation rail.
 
@@ -57,7 +57,7 @@ MIT licensed, with upstream attribution retained. Push this source repository to
 
 macOS updates require a newer matching Release with a GitHub SHA-256 asset digest. The archive, every file, platform, version and paths are validated before staging. The installer verifies the new background processes and restores the previous directory and service configuration on failure; successful upgrades retain an old-version backup. Existing Codex sessions are not restarted by updates. SHA-256 verifies integrity, not an independent publisher signature.
 
-Windows 10/11 users can extract `CodexOrbit-Windows-0.5.2.zip` and run `Install.cmd`. The package adapts upstream Store discovery, guarded native relaunch, owned-directory installation, update checks and rollback. Use `Launch.cmd`, `Status.cmd`, `Update.cmd`, and `Uninstall.cmd` for management. Windows uses Node 24 and Windows PowerShell 5.1+. Its native installation and live client placement still require Windows validation; Windows CI has passed script parsing, native helper compilation and archive validation; live Codex compatibility still requires user verification.
+Windows 10/11 users should download the Windows ZIP from Release Assets, choose Extract All, and open the extracted folder until Install.cmd is visible. Double-click **Install.cmd** (shown as Install when extensions are hidden). Do not run inside the ZIP, enter startup looking for an installer, or download GitHub Source code archives. Wait for the installer to explicitly report installation success, then save work, fully quit Codex and reopen it normally. README-Windows.md maps every entry point to its purpose. The package adapts upstream Store discovery, guarded native relaunch, owned-directory installation, update checks and rollback. Use `Launch.cmd`, `Status.cmd`, `Update.cmd`, and `Uninstall.cmd` for management. Windows uses Node 24 and Windows PowerShell 5.1+. Its native installation and live client placement still require Windows validation; Windows CI has passed script parsing, native helper compilation and archive validation; live Codex compatibility still requires user verification.
 
 The configured repository is `y2675632584-hub/codex-fruity-quota`. Publish tags `vVERSION-macos` and `vVERSION-windows`, with the corresponding ZIP and `SHA256SUMS.txt`. Platform-tag workflows build, test and publish downloads.
 

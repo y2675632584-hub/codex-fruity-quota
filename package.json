@@ -1,6 +1,6 @@
 {
   "name": "codex-fruity-quota",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "type": "module",
   "description": "Codex 果味额度条 — fixed sidebar quota icon and hover-only daily conversation tokens",

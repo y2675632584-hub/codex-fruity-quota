@@ -43,4 +43,7 @@ def adapt(root, vendor, output, version):
     save('windows/update.json',json.dumps({'schema':1,'repository':release['repository'],'version':version,'platform':'Windows'},indent=2)+'\n')
 
     for name,action in [('Install','Install'),('Launch','Launch'),('Status','Status'),('Uninstall','Uninstall'),('Update','Update')]:
-        save('windows/'+name+'.cmd','@echo off\r\nchcp 65001 >nul\r\nsetlocal\r\npowershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0manage-windows.ps1" -Action '+action+'\r\npause\r\n')
+        banner = ''
+        if action == 'Install':
+            banner = 'title Codex Fruity Quota - Windows Install\r\necho ========================================\r\necho Codex 果味额度条 - Windows 安装\r\necho 本文件 Install.cmd 是安装入口。\r\necho 请保持解压后的文件夹完整。\r\necho ========================================\r\n'
+        save('windows/'+name+'.cmd','@echo off\r\nchcp 65001 >nul\r\nsetlocal\r\n'+banner+'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0manage-windows.ps1" -Action '+action+'\r\npause\r\n')
