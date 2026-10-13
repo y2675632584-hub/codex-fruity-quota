@@ -4,9 +4,9 @@
 
 ## 第一次安装：双击 Install.cmd
 
-1. 在 GitHub 的 **Windows Release → Assets** 下载 **CodexOrbit-Windows-0.5.3.zip**。不要选 macOS 包，也不要选 GitHub 自动附带的 Source code 源码包。
+1. 在 GitHub 的 **Windows Release → Assets** 下载 **CodexOrbit-Windows-0.5.4.zip**。不要选 macOS 包，也不要选 GitHub 自动附带的 Source code 源码包。
 2. 右键 ZIP → **全部解压**。不要在压缩包预览里直接运行文件。
-3. 打开解压后的 **CodexOrbit-Windows-0.5.3** 文件夹；如果还有一层同名文件夹，继续打开，直到看到 **Install.cmd**。
+3. 打开解压后的 **CodexOrbit-Windows-0.5.4** 文件夹；如果还有一层同名文件夹，继续打开，直到看到 **Install.cmd**。
 4. **双击 Install.cmd，开始安装。** 如果 Windows 隐藏扩展名，它可能只显示为 **Install**，文件类型为“Windows 命令脚本”。保持整个文件夹完整，不要单独移动这个文件。
 5. 等窗口出现 **“安装成功”**，再按任意键关闭。出现错误或仅出现“请按任意键继续”不代表安装成功；保留窗口里的错误信息。
 6. 保存当前工作，完全退出 Codex（包括托盘中的 Codex），再从原来的 Codex 图标打开，等待约 5–10 秒。额度图标应出现在左侧栏帮助／头像上方。

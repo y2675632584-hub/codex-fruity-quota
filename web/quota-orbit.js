@@ -1,6 +1,6 @@
 import { remaining, resetCount, percentage } from './quota-model.js';
 
-const arc = 'M 24.544 70.456 A 36 36 0 1 1 75.456 70.456';
+const arc = 'M24.544155877 75.455844123 A36 36 0 1 1 75.455844123 75.455844123';
 const template = document.createElement('template');
 template.innerHTML = `
   <style>
@@ -21,9 +21,9 @@ template.innerHTML = `
     <svg viewBox="0 0 100 100" aria-hidden="true">
       <path class="track" d="${arc}" pathLength="100"></path>
       <path class="fill" d="${arc}" pathLength="100" stroke-dasharray="0 100" visibility="hidden"></path>
-      <text x="50" y="45" visibility="hidden"></text>
-      <path class="week-track" d="M29 82 Q50 94 71 82" pathLength="100"></path>
-      <path class="week-fill" d="M29 82 Q50 94 71 82" pathLength="100" visibility="hidden"></path>
+      <text x="50" y="50" visibility="hidden"></text>
+      <path class="week-track" d="M33.656342009 82.07623487 A36 36 0 0 0 66.343657991 82.07623487" pathLength="100"></path>
+      <path class="week-fill" d="M33.656342009 82.07623487 A36 36 0 0 0 66.343657991 82.07623487" pathLength="100" visibility="hidden"></path>
     </svg>
   </button>`;
 

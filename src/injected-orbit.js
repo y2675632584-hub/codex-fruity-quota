@@ -1,7 +1,7 @@
 /* Placement is adapted from codex-usage-badge (MIT). See THIRD_PARTY_NOTICES.md. */
 function installQuotaOrbit() {
   const key = '__codexOrbit';
-  const version = 7;
+  const version = 8;
   if (window[key]?.version === version) { window[key].place(); return; }
   window[key]?.destroy?.();
   const badge = document.createElement('div');
@@ -25,11 +25,11 @@ function installQuotaOrbit() {
   let palette = 'classic';
   try { const saved=localStorage.getItem(storageKey); if(validPalette(saved))palette=saved; } catch {}
   badge.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true">
-    <path class="orbit-track" d="M24.544 70.456 A36 36 0 1 1 75.456 70.456" pathLength="100"/>
-    <path class="orbit-fill" d="M24.544 70.456 A36 36 0 1 1 75.456 70.456" pathLength="100" visibility="hidden"/>
-    <text class="orbit-resets" x="50" y="45" visibility="hidden"></text>
-    <path class="orbit-week-track" d="M29 82 Q50 94 71 82" pathLength="100"/>
-    <path class="orbit-week-fill" d="M29 82 Q50 94 71 82" pathLength="100" visibility="hidden"/>
+    <path class="orbit-track" d="M24.544155877 75.455844123 A36 36 0 1 1 75.455844123 75.455844123" pathLength="100"/>
+    <path class="orbit-fill" d="M24.544155877 75.455844123 A36 36 0 1 1 75.455844123 75.455844123" pathLength="100" visibility="hidden"/>
+    <text class="orbit-resets" x="50" y="50" visibility="hidden"></text>
+    <path class="orbit-week-track" d="M33.656342009 82.07623487 A36 36 0 0 0 66.343657991 82.07623487" pathLength="100"/>
+    <path class="orbit-week-fill" d="M33.656342009 82.07623487 A36 36 0 0 0 66.343657991 82.07623487" pathLength="100" visibility="hidden"/>
   </svg>`;
   const style = document.createElement('style');
   style.id = 'codex-orbit-style';

@@ -90,6 +90,27 @@ test('weekly warning is strictly below 20 across every palette and independent o
     assert.equal(context.badge.dataset.low,String(palette==='battery'));
   }
 });
+test('upper and weekly arcs share one circle, with symmetric gaps and matching preview geometry', () => {
+  const source=fs.readFileSync(path.join(__dirname,'../src/injected-orbit.js'),'utf8');
+  const preview=fs.readFileSync(path.join(__dirname,'../web/quota-orbit.js'),'utf8');
+  const main=/class="orbit-track" d="([^"]+)"/.exec(source)[1];
+  const week=/class="orbit-week-track" d="([^"]+)"/.exec(source)[1];
+  function parse(path) {
+    assert.match(path,/^M[\d.]+ [\d.]+ A36 36 0 [01] [01] [\d.]+ [\d.]+$/);
+    const [x1,y1,rx,ry,rotation,large,sweep,x2,y2]=path.match(/[\d.]+/g).map(Number);
+    for(const [x,y] of [[x1,y1],[x2,y2]])assert.ok(Math.abs(Math.hypot(x-50,y-50)-36)<1e-7);
+    return {a:Math.atan2(y1-50,x1-50)*180/Math.PI,b:Math.atan2(y2-50,x2-50)*180/Math.PI,large,sweep};
+  }
+  const upper=parse(main),bottom=parse(week);
+  assert.equal(upper.large,1);assert.equal(upper.sweep,1);
+  assert.equal(bottom.large,0);assert.equal(bottom.sweep,0);
+  assert.ok(Math.abs((360-upper.a+upper.b)-270)<1e-7);
+  assert.ok(Math.abs((bottom.a-bottom.b)-54)<1e-7);
+  assert.ok(Math.abs(upper.a-bottom.a-18)<1e-7);
+  assert.ok(Math.abs(bottom.b-upper.b-18)<1e-7);
+  assert.ok(preview.includes(main)&&preview.includes(week));
+  assert.ok(source.includes('x="50" y="50"')&&preview.includes('x="50" y="50"'));
+});
 test('upstream notification merging clears previous account data', () => {
   const result=runtime.mergeRateLimitsResponse(payload(),{accountId:'NEW_ACCOUNT',rateLimitsByLimitId:{codex:{limitId:'codex',primary:null,secondary:null}}});
   assert.equal(runtime.sanitizeOrbitUsage(result).resetCount,null);
