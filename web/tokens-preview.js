@@ -24,9 +24,11 @@ function updateQuota(){
  const weeklyOnly=document.getElementById('tokens-weekly-only').checked;
  const resetMode=document.getElementById('tokens-reset-mode').value;
  const now=Math.floor(Date.now()/1000);
+ const week=document.getElementById('tokens-week-percent').value;
  const resetExpirations=resetMode==='dated'?[now+7*86400,now+14*86400]:resetMode==='unlimited'?[null,null]:[];
- window.__codexOrbit.update({fiveHour:weeklyOnly?null:{usedPercent:35,resetsAt:now+5*3600},weekly:{usedPercent:50,resetsAt:now+7*86400},resetCount:resetMode==='zero'?0:2,resetExpirations,status:'live',fetchedAt:now});
+ window.__codexOrbit.update({fiveHour:weeklyOnly?null:{usedPercent:35,resetsAt:now+5*3600},weekly:week==='unknown'?null:{usedPercent:100-Number(week),resetsAt:now+7*86400},resetCount:resetMode==='zero'?0:2,resetExpirations,status:'live',fetchedAt:now});
 }
+document.getElementById('tokens-week-percent').onchange=updateQuota;
 document.getElementById('tokens-reset-mode').onchange=updateQuota;
 document.getElementById('tokens-weekly-only').onchange=updateQuota;updateQuota();
 update();

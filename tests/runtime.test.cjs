@@ -64,6 +64,32 @@ test('reset card UI groups dates and distinguishes unlimited, missing and zero c
   context.value={resetExpirations:[]};
   assert.equal(context.creditExpiryText(2),'重置卡到期\n到期时间暂不可用（2 张）');
 });
+test('weekly warning is strictly below 20 across every palette and independent of the ring', () => {
+  const vm=require('node:vm');
+  const source=fs.readFileSync(path.join(__dirname,'../src/injected-orbit.js'),'utf8');
+  const remainingSource=source.slice(source.indexOf('  const remaining ='),source.indexOf('  const percent ='));
+  const renderSource=source.slice(source.indexOf('  function render()'),source.indexOf("    const fill = badge.querySelector('.orbit-fill');"))+'\n}';
+  const style={setProperty(){},removeProperty(){}};
+  const palettes=Object.fromEntries(['classic','blue','purple','battery','peach','amber'].map(id=>[id,{light:'#111',dark:'#eee'}]));
+  const context={palettes,palette:'classic',value:{},badge:{dataset:{},style},details:{dataset:{},style,querySelectorAll:()=>[]}};
+  vm.createContext(context);vm.runInContext(remainingSource+renderSource,context);
+  for(const palette of Object.keys(palettes)) {
+    context.palette=palette;
+    for(const remaining of [100,21,20,19.99,19,0,null]) {
+      context.value={fiveHour:{usedPercent:10},weekly:remaining===null?null:{usedPercent:100-remaining},status:'live'};
+      context.render();
+      assert.equal(context.badge.dataset.weekLow,String(remaining!==null&&remaining<20),`${palette}: ${remaining}`);
+      assert.equal(context.details.dataset.weekLow,context.badge.dataset.weekLow);
+      assert.equal(context.badge.dataset.low,'false');
+    }
+    context.value={fiveHour:null,weekly:{usedPercent:81},status:'live'};context.render();
+    assert.equal(context.badge.dataset.weekLow,'true');
+    assert.equal(context.badge.dataset.low,String(palette==='battery'));
+    context.value={fiveHour:{usedPercent:75},weekly:{usedPercent:50},status:'live'};context.render();
+    assert.equal(context.badge.dataset.weekLow,'false');
+    assert.equal(context.badge.dataset.low,String(palette==='battery'));
+  }
+});
 test('upstream notification merging clears previous account data', () => {
   const result=runtime.mergeRateLimitsResponse(payload(),{accountId:'NEW_ACCOUNT',rateLimitsByLimitId:{codex:{limitId:'codex',primary:null,secondary:null}}});
   assert.equal(runtime.sanitizeOrbitUsage(result).resetCount,null);

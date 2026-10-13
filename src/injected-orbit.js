@@ -1,7 +1,7 @@
 /* Placement is adapted from codex-usage-badge (MIT). See THIRD_PARTY_NOTICES.md. */
 function installQuotaOrbit() {
   const key = '__codexOrbit';
-  const version = 6;
+  const version = 7;
   if (window[key]?.version === version) { window[key].place(); return; }
   window[key]?.destroy?.();
   const badge = document.createElement('div');
@@ -49,6 +49,7 @@ function installQuotaOrbit() {
     #codex-orbit-badge[data-low="true"] .orbit-fill{stroke:#e5484d}
     #codex-orbit-badge .orbit-week-track{stroke:var(--orbit-track)}
     #codex-orbit-badge .orbit-week-fill{stroke:currentColor;transition:stroke-dasharray .25s ease}
+    #codex-orbit-badge[data-week-low="true"] .orbit-week-fill{stroke:#e5484d}
     #codex-orbit-badge text{fill:currentColor;font:600 29px -apple-system,BlinkMacSystemFont,sans-serif;
       text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums}
     #codex-orbit-badge[data-state="unavailable"] .orbit-track{stroke-dasharray:3 6}
@@ -89,6 +90,8 @@ function installQuotaOrbit() {
     @media(prefers-color-scheme:dark){html:not(.light):not([data-theme="light"]) #codex-orbit-details{color:var(--color-text-primary,#eee);background:var(--color-surface-elevated-secondary,#252525)}}
     @media(prefers-color-scheme:dark){html:not(.light):not([data-theme="light"]) #codex-orbit-details .orbit-swatch{background:var(--swatch-dark)}}
     @media(prefers-color-scheme:dark){html:not(.light):not([data-theme="light"]) #codex-orbit-details .orbit-quota-fill{background:var(--orbit-details-dark,currentColor)}}
+    #codex-orbit-details[data-week-low="true"] .orbit-week .orbit-quota-fill{background:#e5484d}
+    #codex-orbit-details[data-week-low="true"] .orbit-week .orbit-quota-percent{color:#e5484d}
     @media(prefers-reduced-motion:reduce){#codex-orbit-badge .orbit-fill,#codex-orbit-badge .orbit-week-fill,#codex-orbit-details .orbit-quota-fill{transition:none}}
   `;
   const details = document.createElement('div');
@@ -102,7 +105,7 @@ function installQuotaOrbit() {
       <div class="orbit-quota orbit-week"><div class="orbit-quota-header"><span>本周</span><span class="orbit-quota-percent"></span></div><div class="orbit-quota-track" role="progressbar" aria-label="本周剩余额度" aria-valuemin="0" aria-valuemax="100"><span class="orbit-quota-fill"></span></div><div class="orbit-quota-reset"></div></div>
       <div class="orbit-reset-summary"></div><div class="orbit-reset-expirations"></div>
     </div><fieldset><legend>图标配色</legend><div class="orbit-colors"></div></fieldset>
-    <p class="orbit-color-note">仅电量绿在剩余 ≤30% 时外圈变红，周额度线和数字保持绿色。</p>
+    <p class="orbit-color-note">仅电量绿在剩余 ≤30% 时外圈变红；周额度低于 20% 时，所有配色的周额度线与详情条都变红。</p>
     <fieldset><legend>对话用量</legend><label><input type="checkbox" class="orbit-token-toggle"> 悬停对话时显示 Token</label><p class="orbit-color-note">显示今日与累计用量，不消耗 Token。</p></fieldset>
     <p class="orbit-save-status" role="status"></p>`;
   const tokenToggle=details.querySelector('.orbit-token-toggle');
@@ -185,6 +188,7 @@ function installQuotaOrbit() {
     badge.dataset.state = state;
     badge.dataset.palette = palette;
     badge.dataset.low = String(palette === 'battery' && ring !== null && ring <= 30);
+    badge.dataset.weekLow = details.dataset.weekLow = String(week !== null && week < 20);
     for(const appearance of ['light','dark']) {
       const property=`--orbit-palette-${appearance}`;
       if(palette === 'classic'){badge.style.removeProperty(property);details.style.removeProperty(`--orbit-details-${appearance}`);}
@@ -286,7 +290,7 @@ function installQuotaOrbit() {
         badgeCount:document.querySelectorAll('#codex-orbit-badge').length,
         ringWindow:value.ringWindow ?? (value.fiveHour ? 'fiveHour' : value.weekly ? 'weekly' : null), status:value.status, fetchedAt:value.fetchedAt ?? null, fiveRemaining:remaining(value.fiveHour),
         weeklyRemaining:remaining(value.weekly), resetCount:value.resetCount,
-        palette, lowQuota:badge.dataset.low==='true', reason:placementReason };
+        palette, lowQuota:badge.dataset.low==='true', lowWeeklyQuota:badge.dataset.weekLow==='true', reason:placementReason };
     },
     destroy() {
       disposed = true; observer.disconnect(); resizeObserver.disconnect();

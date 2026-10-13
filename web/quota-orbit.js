@@ -12,6 +12,7 @@ template.innerHTML = `
     path{fill:none;stroke-width:6.5;stroke-linecap:round}
     .track{stroke:var(--orbit-track)}.fill{stroke:currentColor;transition:stroke-dasharray .3s ease}
     .week-track{stroke:var(--orbit-track)}.week-fill{stroke:currentColor;transition:stroke-dasharray .2s ease}
+    :host([data-week-low="true"]) .week-fill{stroke:#e5484d}
     text{fill:currentColor;font:600 29px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums}
     :host([data-status=stale]) svg{opacity:.5}:host([data-status=unavailable]) .track{stroke-dasharray:3 6}
     @media(prefers-reduced-motion:reduce){.fill,.week-fill{transition:none}}
@@ -39,6 +40,7 @@ export class QuotaOrbit extends HTMLElement {
     this._usage = value;
     const five = remaining(value?.fiveHour?.usedPercent);
     const week = remaining(value?.weekly?.usedPercent);
+    this.dataset.weekLow=String(week!==null && week<20);
     const weeklyRing = value?.ringWindow === 'weekly' || (value?.ringWindow == null && !value?.fiveHour && !!value?.weekly);
     const ring = weeklyRing ? week : five;
     const count = resetCount(value?.resetCount);

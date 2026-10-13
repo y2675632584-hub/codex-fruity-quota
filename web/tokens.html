@@ -22,6 +22,7 @@
       <aside class="controls">
         <p class="control-title">演示数据 · 非真实账户</p>
         <label><input id="tokens-weekly-only" type="checkbox"> Pro／仅周额度</label>
+        <label>周剩余额度 <select id="tokens-week-percent"><option value="50">50%</option><option value="20">20%</option><option value="19">19%</option><option value="0">0%</option><option value="unknown">未知</option></select></label>
         <label>重置卡样板 <select id="tokens-reset-mode"><option value="dated">两张有到期时间</option><option value="unlimited">无到期限制</option><option value="missing">未提供到期时间</option><option value="zero">没有重置卡</option></select></label>
         <button class="test-action" id="tokens-hover">模拟悬停「界面设计」</button>
         <button class="test-action" id="tokens-hover-zero">模拟悬停零用量对话</button>
@@ -37,7 +38,7 @@
         <p class="note">点击左下角额度图标，可开关「对话 Token」。仅支持有本地记录的 Codex 对话；远程／云端没有完整本地记录时显示暂不可用。</p>
       </aside>
     </section>
-    <footer>Codex 果味额度条 0.5.1 · MIT · 复用 codex-usage-badge 的定位与连接方案</footer>
+    <footer>Codex 果味额度条 0.5.2 · MIT · 复用 codex-usage-badge 的定位与连接方案</footer>
   </main>
   <template id="rail-template"><nav data-app-navigation-rail aria-label="模拟导航栏"><div class="top-icons"><span>⌂</span><span>◷</span><span>▥</span><span>▧</span><span>⚙</span><span>···</span></div><div class="rail-spacer"></div><div class="account-footer"><span class="help">?</span><div class="avatar">U</div></div></nav></template>
 </body>
